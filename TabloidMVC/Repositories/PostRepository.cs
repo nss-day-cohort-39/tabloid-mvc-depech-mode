@@ -207,6 +207,25 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public void Delete(Post post)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            DELETE FROM Post
+                            WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", post.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         public void Update(Post post)
         {
             using (var conn = Connection)
