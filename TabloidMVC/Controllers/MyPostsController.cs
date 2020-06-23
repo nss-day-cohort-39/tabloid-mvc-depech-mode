@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -14,10 +16,12 @@ namespace TabloidMVC.Controllers
     public class MyPostsController : Controller
     {
         private readonly PostRepository _postRepo;
+        private readonly CategoryRepository _categoryRepository;
 
         public MyPostsController(IConfiguration config)
         {
             _postRepo = new PostRepository(config);
+            _categoryRepository = new CategoryRepository(config);
         }
 
         // GET: MyPosts
@@ -34,27 +38,48 @@ namespace TabloidMVC.Controllers
         // GET: MyPosts/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var post = _postRepo.GetPublisedPostById(id);
+            if (post == null)
+            {
+                int userId = GetCurrentUserProfileId();
+                post = _postRepo.GetUserPostById(id, userId);
+                if (post == null)
+                {
+                    return NotFound();
+                }
+            }
+
+            return View("../Post/Details", post);
         }
 
         // GET: MyPosts/Create
         public ActionResult Create()
         {
-            return View();
+            var vm = new PostCreateViewModel();
+            vm.CategoryOptions = _categoryRepository.GetAll();
+            return View("../Post/Create", vm);
+            
         }
 
         // POST: MyPosts/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(PostCreateViewModel vm)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                vm.Post.CreateDateTime = DateAndTime.Now;
+                vm.Post.IsApproved = true;
+                vm.Post.UserProfileId = GetCurrentUserProfileId();
+
+                _postRepo.Add(vm.Post);
+
+                return RedirectToAction("Details", new { id = vm.Post.Id });
             }
             catch
             {
-                return View();
+                vm.CategoryOptions = _categoryRepository.GetAll();
+                return View("../Post/Create", vm);
             }
         }
 
@@ -100,6 +125,11 @@ namespace TabloidMVC.Controllers
             }
         }
         private int GetCurrentUserId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
+        }
+        private int GetCurrentUserProfileId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.Parse(id);
