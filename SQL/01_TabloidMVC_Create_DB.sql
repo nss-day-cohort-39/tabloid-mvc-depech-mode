@@ -55,7 +55,8 @@ CREATE TABLE [Subscription] (
 
 CREATE TABLE [Category] (
   [Id] integer PRIMARY KEY IDENTITY,
-  [Name] nvarchar(50) NOT NULL
+  [Name] nvarchar(50) NOT NULL,
+  [Active] bit DEFAULT 1 NOT NULL
 )
 
 CREATE TABLE [Post] (
