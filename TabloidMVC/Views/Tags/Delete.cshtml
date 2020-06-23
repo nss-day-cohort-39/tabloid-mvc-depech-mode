@@ -1,0 +1,15 @@
+﻿@model TabloidMVC.Models.Tag
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<div class="container pt-5">
+    <h3>Are you sure you want to delete the tag @Model.Name?</h3>
+
+
+    <form asp-action="Delete">
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
