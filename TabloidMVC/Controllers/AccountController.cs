@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -17,6 +18,25 @@ namespace TabloidMVC.Controllers
         public AccountController(IConfiguration configuration)
         {
             _userProfileRepository = new UserProfileRepository(configuration);
+        }
+
+        public IActionResult Register()
+        {
+            var newUser = new UserProfile();
+            return View(newUser);
+        }
+        [HttpPost]
+        public IActionResult Register(UserProfile newUser)
+        {
+            try 
+            {
+                newUser.CreateDateTime = DateAndTime.Now;
+                return RedirectToAction("Index","Home");
+            }
+            catch 
+            {
+                return View();
+            }
         }
 
         public IActionResult Login()
