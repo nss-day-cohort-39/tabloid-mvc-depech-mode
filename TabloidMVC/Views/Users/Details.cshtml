@@ -1,0 +1,54 @@
+﻿@model TabloidMVC.Models.UserProfile
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+    <div class="container pt-5">
+        @if (String.IsNullOrEmpty(Model.ImageLocation))
+        {
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Font_Awesome_5_regular_user-circle.svg"
+                 style="width:100px;margin-right:20px; margin-bottom:10px;"
+                 class="card-img-top"
+                 alt="User" />
+        }
+        else
+        {
+            <img src="@Model.ImageLocation" class="card-img-top" alt="Doggo" />
+        }
+        <h4>@Model.DisplayName</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.FullName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.FullName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.DisplayName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.DisplayName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CreateDateTime)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CreateDateTime)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.UserType)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.UserType.Name)
+            </dd>
+        </dl>
+        <a asp-action="Index">Back to List</a>
+    </div>
