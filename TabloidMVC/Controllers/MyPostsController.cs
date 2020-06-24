@@ -1,57 +1,70 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
-using System;
-using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
 {
-    [Authorize]
-    public class PostController : Controller
+    public class MyPostsController : Controller
     {
-        private readonly PostRepository _postRepository;
+        private readonly PostRepository _postRepo;
         private readonly CategoryRepository _categoryRepository;
 
-        public PostController(IConfiguration config)
+        public MyPostsController(IConfiguration config)
         {
-            _postRepository = new PostRepository(config);
+            _postRepo = new PostRepository(config);
             _categoryRepository = new CategoryRepository(config);
         }
 
-        public IActionResult Index()
+        // GET: MyPosts
+        public ActionResult Index()
         {
-            var posts = _postRepository.GetAllPublishedPosts();
-            return View(posts);
+            //Get the user ID
+            int userId = GetCurrentUserId();
+
+            List<Post> userPosts = _postRepo.GetAllUserPosts(userId);
+
+            return View(userPosts);
         }
 
-        public IActionResult Details(int id)
+        // GET: MyPosts/Details/5
+        public ActionResult Details(int id)
         {
-            var post = _postRepository.GetPublisedPostById(id);
+            var post = _postRepo.GetPublisedPostById(id);
             if (post == null)
             {
                 int userId = GetCurrentUserProfileId();
-                post = _postRepository.GetUserPostById(id, userId);
+                post = _postRepo.GetUserPostById(id, userId);
                 if (post == null)
                 {
                     return NotFound();
                 }
             }
-            return View(post);
+
+            return View("../Post/Details", post);
         }
 
-        public IActionResult Create()
+        // GET: MyPosts/Create
+        public ActionResult Create()
         {
             var vm = new PostCreateViewModel();
             vm.CategoryOptions = _categoryRepository.GetAll();
-            return View(vm);
+            return View("../Post/Create", vm);
+            
         }
 
+        // POST: MyPosts/Create
         [HttpPost]
-        public IActionResult Create(PostCreateViewModel vm)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(PostCreateViewModel vm)
         {
             try
             {
@@ -59,23 +72,24 @@ namespace TabloidMVC.Controllers
                 vm.Post.IsApproved = true;
                 vm.Post.UserProfileId = GetCurrentUserProfileId();
 
-                _postRepository.Add(vm.Post);
+                _postRepo.Add(vm.Post);
 
                 return RedirectToAction("Details", new { id = vm.Post.Id });
-            } 
+            }
             catch
             {
                 vm.CategoryOptions = _categoryRepository.GetAll();
-                return View(vm);
+                return View("../Post/Create", vm);
             }
         }
 
+        // GET: MyPosts/Edit/5
         public ActionResult Edit(int id)
         {
             var vm = new PostCreateViewModel();
             vm.CategoryOptions = _categoryRepository.GetAll();
             int userId = GetCurrentUserProfileId();
-            var post = _postRepository.GetUserPostById(id, userId);
+            var post = _postRepo.GetUserPostById(id, userId);
             vm.Post = post;
 
             if (post == null)
@@ -83,62 +97,65 @@ namespace TabloidMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            return View(vm);
+            return View("../Post/Edit", vm);
         }
 
-        // POST: CategoryController/Edit/5
+        // POST: MyPosts/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, PostCreateViewModel vm)
         {
             try
             {
-                _postRepository.Update(vm.Post);
+                _postRepo.Update(vm.Post);
 
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View(vm);
+                return View("../Post/Edit", vm);
             }
         }
 
-        private int GetCurrentUserProfileId()
-        {
-            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return int.Parse(id);
-        }
-
+        // GET: MyPosts/Delete/5
         public ActionResult Delete(int id)
         {
             int userId = GetCurrentUserProfileId();
-            var post = _postRepository.GetUserPostById(id, userId);
+            var post = _postRepo.GetUserPostById(id, userId);
 
             if (post == null)
             {
                 return RedirectToAction("Index");
             }
 
-            return View(post);
+            return View("../Post/Delete", post);
         }
 
-        // POST: CategoryController/Delete/5
+        // POST: MyPosts/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Post post)
         {
             try
             {
-                _postRepository.Delete(post);
+                _postRepo.Delete(post);
 
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                return View(post);
+                return View("../Post/Delete", post);
             }
         }
-
+        private int GetCurrentUserId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
+        }
+        private int GetCurrentUserProfileId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
+        }
     }
-
 }
