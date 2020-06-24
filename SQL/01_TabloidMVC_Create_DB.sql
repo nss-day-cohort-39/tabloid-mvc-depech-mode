@@ -34,6 +34,7 @@ CREATE TABLE [UserProfile] (
   [Email] nvarchar(555) NOT NULL,
   [CreateDateTime] datetime NOT NULL,
   [ImageLocation] nvarchar(255),
+  [Active] bit DEFAULT 1 NOT NULL,
   [UserTypeId] integer NOT NULL,
 
   CONSTRAINT [FK_User_UserType] FOREIGN KEY ([UserTypeId]) REFERENCES [UserType] ([Id])
