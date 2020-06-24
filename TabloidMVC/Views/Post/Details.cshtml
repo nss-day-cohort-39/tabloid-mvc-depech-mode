@@ -24,6 +24,24 @@
                     </a>
                 </div>
 
+
+
+                <section class="col-lg-4 col-md-8 container mt-5">
+                    <h1>Comments</h1>
+
+                    <ul class="list-group mt-4">
+                        @foreach (Comment comment in Model.Comment)
+                        {
+                        <li class="list-group-item disabled" aria-disabled="true">
+                            <span class="font-weight-bold ml-4">Content: @comment.Subject</span>
+                            <span class="font-weight-bold ml-4">Content: @comment.Content</span>
+                            <span class="font-weight-bold ml-4">Created: @comment.CreateDateTime</span>
+                            <span class="font-weight-bold ml-4">Author Display Name: @comment.DisplayName</span>
+                        </li>
+                        }
+                    </ul>
+                </section>
+
             </section>
             <hr />
             @if (!string.IsNullOrWhiteSpace(Model.ImageLocation))

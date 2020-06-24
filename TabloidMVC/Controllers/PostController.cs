@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
@@ -33,11 +34,16 @@ namespace TabloidMVC.Controllers
         public IActionResult Details(int id)
         {
             var post = _postRepository.GetPublisedPostById(id);
+            List<Comment> comment = _commentRepository.GetByPostId(post.Id);
             if (post == null)
             {
                 int userId = GetCurrentUserProfileId();
                 post = _postRepository.GetUserPostById(id, userId);
                 if (post == null)
+                {
+                    return NotFound();
+                }
+                if (comment == null)
                 {
                     return NotFound();
                 }
