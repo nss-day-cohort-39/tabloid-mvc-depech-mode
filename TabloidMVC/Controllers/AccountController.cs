@@ -31,6 +31,7 @@ namespace TabloidMVC.Controllers
             try 
             {
                 newUser.CreateDateTime = DateAndTime.Now;
+                _userProfileRepository.Add(newUser);
                 return RedirectToAction("Index","Home");
             }
             catch 

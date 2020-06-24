@@ -64,7 +64,7 @@ namespace TabloidMVC.Repositories
                         INSERT INTO UserProfile (
                               DisplayName, FirstName, LastName, Email,
                               CreateDateTime, ImageLocation, UserTypeId)
-                        OUTPUT INSERTED.ID
+                        OUTPUT  
                         VALUES (
                                 @DisplayName, @FirstName, @LastName, @Email, 
                                 @CreateDateTime,@ImageLocation, @UserTypeId)";
@@ -78,6 +78,7 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@UserTypeId", newUser.UserTypeId);
                     
                     newUser.Id = (int)cmd.ExecuteScalar();
+
 
                 }
             }
