@@ -107,21 +107,31 @@ namespace TabloidMVC.Controllers
         // GET: MyPosts/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            int userId = GetCurrentUserProfileId();
+            var post = _postRepo.GetUserPostById(id, userId);
+
+            if (post == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View("../Post/Delete", post);
         }
 
         // POST: MyPosts/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Post post)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _postRepo.Delete(post);
+
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return View("../Post/Delete", post);
             }
         }
         private int GetCurrentUserId()
