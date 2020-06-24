@@ -64,13 +64,13 @@ namespace TabloidMVC.Repositories
                         INSERT INTO UserProfile (
                               DisplayName, FirstName, LastName, Email,
                               CreateDateTime, ImageLocation, UserTypeId)
-                        OUTPUT  
+                        OUTPUT INSERTED.ID 
                         VALUES (
                                 @DisplayName, @FirstName, @LastName, @Email, 
                                 @CreateDateTime,@ImageLocation, @UserTypeId)";
 
                     cmd.Parameters.AddWithValue("@DisplayName", newUser.DisplayName);
-                    cmd.Parameters.AddWithValue("@FirsName", newUser.FirstName);
+                    cmd.Parameters.AddWithValue("@FirstName", newUser.FirstName);
                     cmd.Parameters.AddWithValue("@LastName", newUser.LastName);
                     cmd.Parameters.AddWithValue("@Email", newUser.Email);
                     cmd.Parameters.AddWithValue("@CreateDateTime", newUser.CreateDateTime );
