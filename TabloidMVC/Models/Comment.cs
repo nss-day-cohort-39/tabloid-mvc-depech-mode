@@ -22,6 +22,7 @@ namespace TabloidMVC.Models
         [DataType(DataType.Date)]
         public DateTime CreateDateTime { get; set; }
         public int PostId { get; set; }
+        public string DisplayName { get; set; }
         public int UserProfileId { get; set; }
 
     }

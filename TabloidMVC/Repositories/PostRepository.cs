@@ -12,6 +12,7 @@ namespace TabloidMVC.Repositories
     public class PostRepository : BaseRepository
     {
         public PostRepository(IConfiguration config) : base(config) { }
+        
         public List<Post> GetAllPublishedPosts()
         {
             using (var conn = Connection)
