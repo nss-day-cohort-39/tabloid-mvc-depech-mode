@@ -38,7 +38,7 @@ namespace TabloidMVC.Controllers
         // GET: MyPosts/Details/5
         public ActionResult Details(int id)
         {
-            var post = _postRepo.GetPublisedPostById(id);
+            var post = _postRepo.GetPublishedPostById(id);
             if (post == null)
             {
                 int userId = GetCurrentUserProfileId();
