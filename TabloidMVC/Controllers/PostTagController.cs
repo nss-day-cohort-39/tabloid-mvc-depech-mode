@@ -15,98 +15,55 @@ namespace TabloidMVC.Controllers
 
         private readonly PostRepository _postRepo;
         private readonly TagRepository _tagRepo;
+        private readonly PostTagRepository _postTagRepo;
 
         public PostTagController(IConfiguration config)
         {
             _postRepo = new PostRepository(config);
             _tagRepo = new TagRepository(config);
+            _postTagRepo = new PostTagRepository(config);
         }
 
         // GET: PostTagController
-        public ActionResult Index(int id)
+        public ActionResult Manage(int id)
         {
             var vm = new PostTagViewModel();
-            var post = _postRepo.GetUserPostById(id, userId);
 
-            vm.TagList = _tagRepo.GetAll(); //list of all possible tags
+            var post = _postRepo.GetPostById(id);
             vm.Post = post;
-
 
             if (post == null)
             {
-                return RedirectToAction("Index");
+                return View("../Post/");
             }
+
+            vm.Tags = _postTagRepo.GetPostTags(id); //list of all tags for this particular post
+            vm.TagList = _tagRepo.GetAll(); //list of all possible tags
 
             return View(vm);
-        }
-
-        // GET: PostTagController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: PostTagController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: PostTagController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PostTagController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
         }
 
         // POST: PostTagController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Manage(int id, PostTagViewModel vm)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+
+                var post = _postRepo.GetPostById(id);
+                vm.Post = post;
+                vm.TagList = _tagRepo.GetAll(); //list of all possible tags
+
+                _postTagRepo.UpdateTags(vm);
+
+                return RedirectToAction("../Post/");
             }
             catch
             {
-                return View();
-            }
-        }
-
-        // GET: PostTagController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: PostTagController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
+                return View(vm);
             }
         }
     }
+
 }

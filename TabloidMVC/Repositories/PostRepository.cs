@@ -116,7 +116,19 @@ namespace TabloidMVC.Repositories
 
                     if (reader.Read())
                     {
-                        post = NewPostFromReader(reader);
+                        post = new Post();
+                        post.Id = reader.GetInt32(reader.GetOrdinal("Id"));
+                        post.Title = reader.GetString(reader.GetOrdinal("Title"));
+                        post.Content = reader.GetString(reader.GetOrdinal("Content"));
+                        post.ImageLocation = reader.GetString(reader.GetOrdinal("HeaderImage"));
+                        post.CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"));
+                        post.PublishDateTime = DbUtils.GetNullableDateTime(reader, "PublishDateTime");
+                        post.CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId"));
+                        post.Category = new Category()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                            Name = reader.GetString(reader.GetOrdinal("CategoryName"))
+                        };
                     }
 
                     reader.Close();

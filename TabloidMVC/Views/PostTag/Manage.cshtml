@@ -1,0 +1,49 @@
+﻿@model TabloidMVC.Models.ViewModels.PostTagViewModel
+
+@{
+    ViewData["Title"] = "Manage";
+}
+
+<div class="container pt-5">
+    <h1>Manage Tags</h1>
+
+    <h4>for "@Model.Post.Title"</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form id="tagForm" asp-action="Manage">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label class="control-label">Tags</label>
+                    <div class="d-flex justify-content-start">
+                        <select id="tags" class="form-control">
+                                <option>Select...</option>
+                            @foreach (Tag tag in Model.TagList)
+                            {
+                                <option>@tag.Name</option>
+                            }
+                        </select>
+                        <button id="addTagButton" type="button" class="ml-2 btn btn-secondary">Add</button>
+                    </div>
+                </div>
+
+                <h4 id="tagContainer">
+                     
+                </h4>
+
+                <!-- A hidden input field that stores all the the tags as a string -->
+                <input id="storedTags" asp-for="TagString" class="form-control" type="hidden" />
+
+                <div class="form-group">
+                    <input id="submitButton" type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="~/js/Tags.js" asp-append-version="true"></script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
