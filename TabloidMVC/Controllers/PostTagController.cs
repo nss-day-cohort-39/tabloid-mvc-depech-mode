@@ -59,8 +59,9 @@ namespace TabloidMVC.Controllers
 
                 return RedirectToAction("../Post/");
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return View(vm);
             }
         }
