@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -17,6 +18,50 @@ namespace TabloidMVC.Controllers
         public AccountController(IConfiguration configuration)
         {
             _userProfileRepository = new UserProfileRepository(configuration);
+        }
+
+        public IActionResult Register()
+        {
+            var newUser = new UserProfile();
+            return View(newUser);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Register(UserProfile newUser)
+        {
+            if (_userProfileRepository.GetByEmail(newUser.Email) == null)
+            {
+                try
+                {
+                    newUser.CreateDateTime = DateAndTime.Now;
+                    newUser.UserTypeId = 2;
+                    _userProfileRepository.Add(newUser);
+
+                }
+                catch
+                {
+                    return View();
+                }
+
+                var registeredUser = _userProfileRepository.GetByEmail(newUser.Email);
+
+                var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, registeredUser.Id.ToString()),
+                new Claim(ClaimTypes.Email, registeredUser.Email),
+            };
+
+                var claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View();
+            
         }
 
         public IActionResult Login()
