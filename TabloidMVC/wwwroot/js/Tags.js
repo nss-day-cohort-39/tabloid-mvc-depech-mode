@@ -5,7 +5,7 @@ const tagContainer = document.querySelector("#tagContainer");
 const addTagButton = document.querySelector("#addTagButton");
 const storedTags = document.querySelector("#storedTags"); //a hidden form field that holds a string version of the tags
 
-const xIcon = `<svg class="bi bi-x" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+const xIcon = `<svg class="bi bi-x" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="pointer-events: none;">
                   <path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708-.708l7-7a.5.5 0 0 1 .708 0z"/>
                   <path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 0 0 0 .708l7 7a.5.5 0 0 0 .708-.708l-7-7a.5.5 0 0 0-.708 0z"/>
                 </svg>`;
@@ -16,7 +16,7 @@ const tagArray = [];
 //function that renders the tags on the DOM
 const renderTags = () => {
     tagContainer.innerHTML = tagArray.map((tag, index) => {
-        return `<a href="#" class="badge badge-light p-2 mr-2 mb-2" id="tag-${index}">${tag} ${xIcon}</a>`;
+        return `<a href="#" class="tag badge badge-light p-2 mr-2 mb-2" id="tag-${index}">${tag} ${xIcon}</a>`;
     }).join('');
     storedTags.value = tagArray.map(tag => {
         return tag;
