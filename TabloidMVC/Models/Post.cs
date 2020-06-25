@@ -36,5 +36,7 @@ namespace TabloidMVC.Models
         public UserProfile UserProfile { get; set; }
 
         public List<Tag> Tags { get; set; }
+
+        public bool IsSubscribed { get; set; }
     }
 }

@@ -16,12 +16,14 @@ namespace TabloidMVC.Controllers
         private readonly PostRepository _postRepository;
         private readonly CategoryRepository _categoryRepository;
         private readonly PostTagRepository _postTagRepo;
+        private readonly SubscriptionRepository _subRepo;
 
         public PostController(IConfiguration config)
         {
             _postRepository = new PostRepository(config);
             _categoryRepository = new CategoryRepository(config);
             _postTagRepo = new PostTagRepository(config);
+            _subRepo = new SubscriptionRepository(config);
         }
 
         public IActionResult Index()
@@ -43,6 +45,7 @@ namespace TabloidMVC.Controllers
                 }
             }
             post.Tags = _postTagRepo.GetPostTags(id);
+            post.IsSubscribed = _subRepo.IsSubscribed(post.UserProfileId);
             return View(post);
         }
 

@@ -18,7 +18,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT* FROM Subscription
+                    cmd.CommandText = @"SELECT * FROM Subscription
                                         WHERE SubscriberUserProfileId = @id";
                     cmd.Parameters.AddWithValue("@id", id);
                     var reader = cmd.ExecuteReader();
@@ -40,6 +40,43 @@ namespace TabloidMVC.Repositories
                     reader.Close();
 
                     return subscriptions;
+                }
+            }
+        }
+
+        public bool IsSubscribed(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT COUNT(Id) AS SubNum FROM Subscription 
+                                        WHERE SubscriberUserProfileId = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    var reader = cmd.ExecuteReader();
+
+                    bool isSubscribed = false;
+
+                    while (reader.Read())
+                    {
+                        int SubNum = reader.GetInt32(reader.GetOrdinal("SubNum"));
+
+                        
+                        if (SubNum > 0)
+                        {
+                            isSubscribed = true;
+                        }
+                        else
+                        {
+                            isSubscribed = false;
+                        }
+                        
+                    }
+
+                    reader.Close();
+
+                    return isSubscribed;
                 }
             }
         }

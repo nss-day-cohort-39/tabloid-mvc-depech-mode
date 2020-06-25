@@ -16,9 +16,18 @@
                     <p class="text-black-50">Published on @Html.DisplayFor(model => model.PublishDateTime)</p>
                 </div>
                 <div class="row">
-                    <a asp-controller="Subscription" asp-action="Index" asp-route-id="@Model.Id" class="btn btn-outline-success mx-1" title="Subscribe">
-                        Subscribe
-                    </a>
+                    @if (Model.IsSubscribed == false)
+                    {
+                        <a asp-controller="Subscription" asp-action="Index" asp-route-id="@Model.Id" class="btn btn-outline-success mx-1" title="Subscribe">
+                            Subscribe
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Subscription" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-dark mx-1" title="Unsubscribe">
+                            Unsubscribe
+                        </a>
+                    }
                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Edit">
                         <i class="fas fa-pencil-alt"></i>
                     </a>
