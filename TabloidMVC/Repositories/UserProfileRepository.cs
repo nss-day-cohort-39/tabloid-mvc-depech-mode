@@ -199,21 +199,36 @@ namespace TabloidMVC.Repositories
         }
         public void DeactivateUser(int id)
         {
-            using (SqlConnection conn = Connection)
+            try
             {
-                conn.Open();
-
-                using (SqlCommand cmd = conn.CreateCommand())
+                using (SqlConnection conn = Connection)
                 {
-                    cmd.CommandText = @"
-                            UPDATE UserProfile
-                            SET Active = 0
-                            WHERE Id = @id";
+                    conn.Open();
 
-                    cmd.Parameters.AddWithValue("@id", id);
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"
+                            DECLARE @ActiveAdmins INT
+                            SELECT @ActiveAdmins = Count(*)
+                            FROM UserProfile
+                            WHERE UserTypeId = 1 AND Active = 1
 
-                    cmd.ExecuteNonQuery();
+                            IF @ActiveAdmins = 1
+                                RAISERROR('System must have at least one administrator.', 16, 1)
+                            ELSE
+                                UPDATE UserProfile
+                                SET Active = 0
+                                WHERE Id = @id";
+
+                        cmd.Parameters.AddWithValue("@id", id);
+
+                        cmd.ExecuteNonQuery();
+                    }
                 }
+            }
+            catch(SqlException ex)
+            {
+                throw new Errors.AdministratorTypeException(ex.Message);
             }
         }
         public void ReactivateUser(int id)
@@ -266,9 +281,9 @@ namespace TabloidMVC.Repositories
                     }
                 }
             }
-            catch(SqlException exc)
+            catch(SqlException ex)
             {
-                throw new Errors.AdministratorTypeException(exc.Message);
+                throw new Errors.AdministratorTypeException(ex.Message);
             }
         }
     }

@@ -56,13 +56,18 @@ namespace TabloidMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            return View(user);
+            var vm = new ChangeUserTypeViewModel()
+            {
+                User = user
+            };
+
+            return View(vm);
         }
 
         // POST: Deactivate User
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Deactivate(int id, UserProfile user)
+        public ActionResult Deactivate(int id, ChangeUserTypeViewModel vm)
         {
             try
             {
@@ -70,9 +75,11 @@ namespace TabloidMVC.Controllers
 
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View(user);
+                vm.User = _userRepo.GetById(id);
+                vm.Exception = ex;
+                return View(vm);
             }
         }
 

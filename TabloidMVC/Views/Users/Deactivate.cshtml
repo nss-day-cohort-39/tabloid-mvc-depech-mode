@@ -1,12 +1,18 @@
-﻿@model TabloidMVC.Models.UserProfile
+﻿@model TabloidMVC.Models.ViewModels.ChangeUserTypeViewModel
 
 @{
     ViewData["Title"] = "Deactivate";
 }
 
 <div class="container pt-5">
-    <h3>Are you sure you want to deactivate @Model.DisplayName?</h3>
+    <h3>Are you sure you want to deactivate @Model.User.DisplayName?</h3>
     <form asp-action="Deactivate">
+        @if (Model.Exception != null)
+        {
+            <div class="alert alert-warning" role="alert">
+                System must have at least one administrator. Please return to list.
+            </div>
+        }
         <input type="submit" value="Deactivate" class="btn btn-danger" /> |
         <a asp-action="Index">Cancel</a>
     </form>
