@@ -26,19 +26,38 @@ namespace TabloidMVC.Controllers
             return View(newUser);
         }
         [HttpPost]
-        public IActionResult Register(UserProfile newUser)
+        public async Task<IActionResult> Register(UserProfile newUser)
         {
             try 
             {
                 newUser.CreateDateTime = DateAndTime.Now;
                 newUser.UserTypeId = 2;
                 _userProfileRepository.Add(newUser);
-                return RedirectToAction("Index","Home");
+                
             }
             catch 
             {
                 return View();
             }
+
+            var registeredUser = _userProfileRepository.GetByEmail(newUser.Email);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, registeredUser.Id.ToString()),
+                new Claim(ClaimTypes.Email, registeredUser.Email),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity));
+
+            return RedirectToAction("Index", "Home");
+
+            
         }
 
         public IActionResult Login()
