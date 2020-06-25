@@ -126,14 +126,13 @@ namespace TabloidMVC.Repositories
                                c.Content,
                                c.UserProfileId, 
                                up.DisplayName AS DisplayName
-                               FROM Comment c
-                               LEFT JOIN UserProfile up ON up.Id = c.UserProfileId
-                               WHERE c.PostId = @PostId    
-                        FROM Comment
-                        WHERE Id = @id
+                        FROM Comment c
+                        LEFT JOIN UserProfile up ON up.Id = c.UserProfileId
+                        WHERE c.PostId = @PostId                            
                     ";
 
-                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@PostId", id);
+                    
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
