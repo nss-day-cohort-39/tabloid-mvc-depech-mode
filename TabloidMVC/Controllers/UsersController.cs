@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,7 @@ using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
 {
+    [Authorize]
     public class UsersController : Controller
     {
         private readonly UserProfileRepository _userRepo;
@@ -54,23 +56,31 @@ namespace TabloidMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            return View(user);
+            var vm = new ChangeUserTypeViewModel()
+            {
+                User = user
+            };
+
+            return View(vm);
         }
 
         // POST: Deactivate User
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Deactivate(int id, UserProfile user)
+        public ActionResult Deactivate(int id, ChangeUserTypeViewModel vm)
         {
+            var user = _userRepo.GetById(id);
             try
             {
-                _userRepo.DeactivateUser(id);
+                _userRepo.DeactivateUser(user);
 
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View(user);
+                vm.User = user;
+                vm.Exception = ex;
+                return View(vm);
             }
         }
 
@@ -79,6 +89,41 @@ namespace TabloidMVC.Controllers
             _userRepo.ReactivateUser(id);
 
             return RedirectToAction("Index");
+        }
+
+        public ActionResult Edit(int id)
+        {
+            var user = _userRepo.GetById(id);
+
+            var vm = new ChangeUserTypeViewModel()
+            {
+                User = user
+            };
+
+            if (user == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(vm);
+        }
+
+        // POST: CategoryController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, ChangeUserTypeViewModel vm)
+        {
+            try
+            {
+                _userRepo.UpdateUserType(vm.User);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                vm.Exception = ex;
+                return View(vm);
+            }
         }
     }
 }
