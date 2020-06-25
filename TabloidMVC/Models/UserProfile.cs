@@ -24,6 +24,7 @@ namespace TabloidMVC.Models
         [DisplayFormat(DataFormatString = "{0:MMM dd, yyyy}")]
         [DisplayName("Created")]
         public DateTime CreateDateTime { get; set; }
+        [DisplayName("Profile Picture URL")]
         public string ImageLocation { get; set; }
         public int UserTypeId { get; set; }
         [DisplayName("User Type")]
