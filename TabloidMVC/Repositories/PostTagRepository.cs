@@ -23,7 +23,8 @@ namespace TabloidMVC.Repositories
                     cmd.CommandText = @"SELECT PostTag.id, PostTag.PostId, PostTag.TagId, Tag.Name 
                                         FROM PostTag
                                         JOIN Tag on Tag.Id = PostTag.TagId
-                                        WHERE PostTag.id = 1";
+                                        WHERE PostTag.PostId = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
                     var reader = cmd.ExecuteReader();
 
                     var tags = new List<Tag>();
