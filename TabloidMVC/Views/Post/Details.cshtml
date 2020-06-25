@@ -1,62 +1,70 @@
-﻿@model TabloidMVC.Models.Post
+﻿@model TabloidMVC.Models.ViewModels.PostIndexViewModel
 
 @{
-    ViewData["Title"] = $"Post - {Model.Title}";
+    ViewData["Title"] = $"Post - {Model.PostModel.Title}";
+}
+@{
+    bool IsAdmin()
+    {
+        return (User.IsInRole("Admin")) ? true : false;
+    }
 }
 
-    <div class="container pt-5">
-        <div class="post">
-            <section class="px-3">
-                <div class="row justify-content-between">
-                    <h1 class="text-secondary">@Model.Title</h1>
-                    <h1 class="text-black-50">@Model.Category.Name</h1>
-                </div>
-                <div class="row justify-content-between">
-                    <p class="text-secondary">Written by @Model.UserProfile.DisplayName</p>
-                    <p class="text-black-50">Published on @Html.DisplayFor(model => model.PublishDateTime)</p>
-                </div>
+<div class="container pt-5">
+    <div class="post">
+        <section class="px-3">
+            <div class="row justify-content-between">
+                <h1 class="text-secondary">@Model.PostModel.Title</h1>
+                <h1 class="text-black-50">@Model.PostModel.Category.Name</h1>
+            </div>
+            <div class="row justify-content-between">
+                <p class="text-secondary">Written by @Model.PostModel.UserProfile.DisplayName</p>
+                <p class="text-black-50">Published on @Html.DisplayFor(model => model.PostModel.PublishDateTime)</p>
+            </div>
+            @if (IsAdmin() || Model.UserId == Model.PostModel.UserProfileId)
+            {
                 <div class="row">
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Edit">
+                    <a asp-action="Edit" asp-route-id="@Model.PostModel.Id" class="btn btn-outline-primary mx-1" title="Edit">
                         <i class="fas fa-pencil-alt"></i>
                     </a>
-                    <a asp-controller="PostTag" asp-action="Manage" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Manage Tags">
+                    <a asp-controller="PostTag" asp-action="Manage" asp-route-id="@Model.PostModel.Id" class="btn btn-outline-primary mx-1" title="Manage Tags">
                         <svg class="bi bi-tag-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1H2zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
                         </svg>
                     </a>
-                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Delete">
+                    <a asp-action="Delete" asp-route-id="@Model.PostModel.Id" class="btn btn-outline-primary mx-1" title="Delete">
                         <i class="fas fa-trash"></i>
                     </a>
                 </div>
-
-            </section>
-
-            @if (@Model.Tags.Count() > 0)
-            {
-                <hr />
-                <section class="d-flex justify-content-lg-start wrap">
-                    <h4 class="badge p-2 mr-2">Tags</h4>
-                    @foreach (Tag tag in @Model.Tags)
-                    {
-                        <h4 class="badge badge-primary p-2 mr-2">@tag.Name</h4>
-                    }
-                </section>
             }
+        </section>
 
+        @if (@Model.PostModel.Tags.Count() > 0)
+        {
             <hr />
-            @if (!string.IsNullOrWhiteSpace(Model.ImageLocation))
-            {
-                <section class="row justify-content-center">
-                    <div>
-                        <img src="@Model.ImageLocation" />
-                    </div>
-                </section>
-            }
-            <section class="row">
-                <p class="col-sm-12 mt-5">@Html.DisplayFor(model => model.Content)</p>
+            <section class="d-flex justify-content-lg-start wrap">
+                <h4 class="badge p-2 mr-2">Tags</h4>
+                @foreach (Tag tag in @Model.PostModel.Tags)
+                {
+                    <h4 class="badge badge-primary p-2 mr-2">@tag.Name</h4>
+                }
             </section>
-        </div>
-        <div>
-            <a asp-action="Index">Back to List</a>
-        </div>
+        }
+
+        <hr />
+        @if (!string.IsNullOrWhiteSpace(Model.PostModel.ImageLocation))
+        {
+            <section class="row justify-content-center">
+                <div>
+                    <img src="@Model.PostModel.ImageLocation" />
+                </div>
+            </section>
+        }
+        <section class="row">
+            <p class="col-sm-12 mt-5">@Html.DisplayFor(model => model.PostModel.Content)</p>
+        </section>
     </div>
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>

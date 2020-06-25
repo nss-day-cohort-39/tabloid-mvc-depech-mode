@@ -26,8 +26,11 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Index()
         {
-            var posts = _postRepository.GetAllPublishedPosts();
-            return View(posts);
+            var vm = new PostIndexViewModel();
+            vm.Posts = _postRepository.GetAllPublishedPosts();
+            vm.UserId = GetCurrentUserProfileId();
+            vm.PostModel = new Post();
+            return View(vm);
         }
 
         public IActionResult Details(int id)
@@ -43,7 +46,10 @@ namespace TabloidMVC.Controllers
                 }
             }
             post.Tags = _postTagRepo.GetPostTags(id);
-            return View(post);
+            var vm = new PostIndexViewModel();
+            vm.PostModel = post;
+            vm.UserId = GetCurrentUserProfileId();
+            return View(vm);
         }
 
         public IActionResult Create()
