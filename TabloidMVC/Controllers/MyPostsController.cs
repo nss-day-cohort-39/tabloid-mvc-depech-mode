@@ -17,11 +17,13 @@ namespace TabloidMVC.Controllers
     {
         private readonly PostRepository _postRepo;
         private readonly CategoryRepository _categoryRepository;
+        private readonly PostTagRepository _postTagRepo;
 
         public MyPostsController(IConfiguration config)
         {
             _postRepo = new PostRepository(config);
             _categoryRepository = new CategoryRepository(config);
+            _postTagRepo = new PostTagRepository(config);
         }
 
         // GET: MyPosts
@@ -43,12 +45,14 @@ namespace TabloidMVC.Controllers
             {
                 int userId = GetCurrentUserProfileId();
                 post = _postRepo.GetUserPostById(id, userId);
+                post.Tags = _postTagRepo.GetPostTags(id);
                 if (post == null)
                 {
                     return NotFound();
                 }
             }
 
+            post.Tags = _postTagRepo.GetPostTags(id);
             return View("../Post/Details", post);
         }
 
