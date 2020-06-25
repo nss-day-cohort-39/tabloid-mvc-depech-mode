@@ -48,6 +48,7 @@ namespace TabloidMVC.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, registeredUser.Id.ToString()),
                 new Claim(ClaimTypes.Email, registeredUser.Email),
+                new Claim(ClaimTypes.Role, registeredUser.UserType.Name)
             };
 
                 var claimsIdentity = new ClaimsIdentity(
