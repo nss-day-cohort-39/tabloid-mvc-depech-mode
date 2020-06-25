@@ -13,7 +13,7 @@ namespace TabloidMVC.Repositories
     public class CommentRepository : BaseRepository
     {
         public CommentRepository(IConfiguration config) : base(config) { }
-        public List<Comment> GetByPostId(int PostId)
+        public List<Comment> GetCommentsByPostId(int PostId)
         {
             using (SqlConnection conn = Connection)
             {

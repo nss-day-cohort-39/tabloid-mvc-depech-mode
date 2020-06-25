@@ -26,7 +26,7 @@ namespace TabloidMVC.Controllers
         public ActionResult GetCommentsByPostId(int PostId)
         {
             var vm = new CommentViewModel();
-            List<Comment> comments = _commentRepository.GetByPostId(PostId);
+            List<Comment> comments = _commentRepository.GetCommentsByPostId(PostId);
             vm.Comments = comments;
             Post post = _postRepository.GetPostByIdForComment(PostId);
             vm.Post = post;
@@ -97,15 +97,17 @@ namespace TabloidMVC.Controllers
         // POST: CommentController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(Comment comment)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _commentRepository.DeleteComment(comment.Id);
+
+                return RedirectToAction("GetCommentsByPostId", new { PostId = comment.Id });
             }
-            catch
-            {
-                return View();
+            catch (Exception ex)
+            {  
+                return View(comment);
             }
         }
 
