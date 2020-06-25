@@ -16,7 +16,7 @@ const tagArray = [];
 //function that renders the tags on the DOM
 const renderTags = () => {
     tagContainer.innerHTML = tagArray.map((tag, index) => {
-        return `<a href="#" class="badge badge-light p-2 mr-2" id="tag-${index}" >${tag} ${xIcon}</a>`;
+        return `<a href="#" class="badge badge-light p-2 mr-2 mb-2" id="tag-${index}" >${tag} ${xIcon}</a>`;
     }).join('');
     storedTags.value = tagArray.map(tag => {
         return tag;
