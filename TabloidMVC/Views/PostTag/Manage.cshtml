@@ -21,7 +21,7 @@
                                 <option>Select...</option>
                                 @foreach (Tag tag in Model.TagList)
                                 {
-                                    <option>@tag.Name</option>
+                                    <option id="opt-@tag.Name">@tag.Name</option>
                                 }
                             </select>
                             <button id="addTagButton" type="button" class="ml-2 btn btn-light">Add</button>

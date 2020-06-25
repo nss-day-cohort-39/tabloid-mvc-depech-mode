@@ -16,7 +16,7 @@ const tagArray = [];
 //function that renders the tags on the DOM
 const renderTags = () => {
     tagContainer.innerHTML = tagArray.map((tag, index) => {
-        return `<a href="#" class="badge badge-light p-2 mr-2 mb-2" id="tag-${index}" >${tag} ${xIcon}</a>`;
+        return `<a href="#" class="badge badge-light p-2 mr-2 mb-2" id="tag-${index}">${tag} ${xIcon}</a>`;
     }).join('');
     storedTags.value = tagArray.map(tag => {
         return tag;
@@ -31,12 +31,27 @@ for (const tag of storedTags.value.split(",")) {
 }
 renderTags();
 
+//get all of the options in the drop-down and disables them if the tag is already in the list
+for (const tag of tagArray) {
+    for (const opt of tagInput.querySelectorAll("option")) {
+        if (tag === opt.innerHTML) {
+            opt.hidden = true;
+        }
+    }
+}
+
 //event listener to add the tag
 addTagButton.addEventListener("click", event => {
     const newTag = tagInput.value;
     if (newTag != "" && !tagArray.includes(newTag) && newTag != "Select...") { //don't add a blank tag or duplicate
         tagArray.push(newTag);
         renderTags();
+        //disable the option in the drop-down
+        for (const opt of tagInput.querySelectorAll("option")) {
+            if (newTag === opt.innerHTML) {
+                opt.hidden = true;
+            }
+        }
     }
     tagInput.value = "Select...";
 });
@@ -47,6 +62,13 @@ tagContainer.addEventListener("click", event => {
         const [prefix, tagId] = event.target.id.split("-");
         tagArray.splice(tagId, 1);
         renderTags();
+        //get all of the options in the drop-down and re-enable them if innerHTML matches
+        for (const opt of tagInput.querySelectorAll("option")) {
+            const optText = event.target.innerHTML.split(' <svg')[0];
+            if (opt.innerHTML === optText) {
+                opt.hidden = false;
+            }
+        }
     }
 });
 
