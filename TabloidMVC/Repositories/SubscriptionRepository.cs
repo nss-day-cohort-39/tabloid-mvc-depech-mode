@@ -11,7 +11,7 @@ namespace TabloidMVC.Repositories
     public class SubscriptionRepository : BaseRepository
     {
         public SubscriptionRepository(IConfiguration config) : base(config) { }
-        public List<Subscription> GetAll()
+        public List<Subscription> GetAll(int id)
         {
             using (var conn = Connection)
             {
@@ -60,7 +60,7 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@beginDateTime", DateTime.Now);
                     cmd.Parameters.AddWithValue("@endDateTime", null);
 
-                    tag.Id = (int)cmd.ExecuteScalar();
+                    subscription.Id = (int)cmd.ExecuteScalar();
                 }
             }
         }

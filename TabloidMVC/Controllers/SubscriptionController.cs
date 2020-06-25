@@ -1,57 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
+using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
 {
+    [Authorize]
     public class SubscriptionController : Controller
     {
-        // GET: SubscriptionController
-        public ActionResult Index()
+
+        private readonly SubscriptionRepository _subRepo;
+        private readonly UserProfileRepository _userRepo;
+        private readonly PostRepository _postRepo;
+
+        public SubscriptionController(IConfiguration config)
         {
-            return View();
+            _subRepo = new SubscriptionRepository(config);
+            _userRepo = new UserProfileRepository(config);
+            _postRepo = new PostRepository(config);
         }
 
-        // GET: SubscriptionController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
 
         // GET: SubscriptionController/Create
-        public ActionResult Create()
+        public ActionResult Index(int id)
         {
-            return View();
+            Post post = _postRepo.GetPostById(id);
+            int subscriberUserId = post.UserProfileId;
+            UserProfile userProfile = _userRepo.GetById(subscriberUserId);
+
+            if (userProfile == null)
+            {
+                return RedirectToAction("Index", "Post");
+            } else
+            {
+                SubscribeViewModel vm = new SubscribeViewModel()
+                {
+                    ProviderUserId = GetCurrentUserProfileId(),
+                    SubscriberUserId = subscriberUserId,
+                    PostId = post.Id,
+                    ProviderUserProfile = userProfile
+                };
+
+                return View(vm);
+            }
+
+            
         }
 
         // POST: SubscriptionController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: SubscriptionController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: SubscriptionController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Index(IFormCollection collection)
         {
             try
             {
@@ -82,6 +89,12 @@ namespace TabloidMVC.Controllers
             {
                 return View();
             }
+        }
+
+        private int GetCurrentUserProfileId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 }
