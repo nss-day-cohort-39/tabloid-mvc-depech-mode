@@ -57,7 +57,7 @@ namespace TabloidMVC.Controllers
 
                 _postTagRepo.UpdateTags(vm);
 
-                return RedirectToAction("../Post/");
+                return RedirectToAction("Details", "Post", new { id = vm.Post.Id });
             }
             catch (Exception ex)
             {
