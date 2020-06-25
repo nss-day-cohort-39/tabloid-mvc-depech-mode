@@ -17,12 +17,14 @@ namespace TabloidMVC.Controllers
         private readonly PostRepository _postRepository;
         private readonly CategoryRepository _categoryRepository;
         private readonly CommentRepository _commentRepository;
+        private readonly PostTagRepository _postTagRepository;
 
         public PostController(IConfiguration config)
         {
             _postRepository = new PostRepository(config);
             _categoryRepository = new CategoryRepository(config);
             _commentRepository = new CommentRepository(config);
+            _postTagRepository = new PostTagRepository(config);
         }
 
         public IActionResult Index()
@@ -33,7 +35,7 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Details(int id)
         {
-            var post = _postRepository.GetPublisedPostById(id);
+            var post = _postRepository.GetPublishedPostById(id);
             List<Comment> comment = _commentRepository.GetByPostId(post.Id);
             if (post == null)
             {
@@ -48,6 +50,7 @@ namespace TabloidMVC.Controllers
                     return NotFound();
                 }
             }
+            post.Tags = _postTagRepository.GetPostTags(id);
             return View(post);
         }
 
