@@ -1,0 +1,13 @@
+﻿@model TabloidMVC.Models.UserProfile
+
+@{
+    ViewData["Title"] = "Deactivate";
+}
+
+<div class="container pt-5">
+    <h3>Are you sure you want to deactivate @Model.DisplayName?</h3>
+    <form asp-action="Deactivate">
+        <input type="submit" value="Deactivate" class="btn btn-danger" /> |
+        <a asp-action="Index">Cancel</a>
+    </form>
+</div>
