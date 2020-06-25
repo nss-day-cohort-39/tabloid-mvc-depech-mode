@@ -19,6 +19,7 @@ namespace TabloidMVC.Models
         [DisplayName("Username")]
         public string DisplayName { get; set; }
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
         [DisplayFormat(DataFormatString = "{0:MMM dd, yyyy}")]
         [DisplayName("Created")]

@@ -28,35 +28,39 @@ namespace TabloidMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserProfile newUser)
         {
-            try 
+            if (_userProfileRepository.GetByEmail(newUser.Email) == null)
             {
-                newUser.CreateDateTime = DateAndTime.Now;
-                newUser.UserTypeId = 2;
-                _userProfileRepository.Add(newUser);
-                
-            }
-            catch 
-            {
-                return View();
-            }
+                try
+                {
+                    newUser.CreateDateTime = DateAndTime.Now;
+                    newUser.UserTypeId = 2;
+                    _userProfileRepository.Add(newUser);
 
-            var registeredUser = _userProfileRepository.GetByEmail(newUser.Email);
+                }
+                catch
+                {
+                    return View();
+                }
 
-            var claims = new List<Claim>
+                var registeredUser = _userProfileRepository.GetByEmail(newUser.Email);
+
+                var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, registeredUser.Id.ToString()),
                 new Claim(ClaimTypes.Email, registeredUser.Email),
             };
 
-            var claimsIdentity = new ClaimsIdentity(
-                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
 
-            return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home");
+            }
 
+            return View();
             
         }
 
