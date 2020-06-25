@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace TabloidMVC.Repositories
                                         c.PostId, 
                                         c.UserProfileId, 
                                         c.[Subject], 
+                                        c.Content,
                                         c.UserProfileId, 
                                         up.DisplayName AS DisplayName
                                         FROM Comment c
@@ -44,6 +46,7 @@ namespace TabloidMVC.Repositories
                             PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
                             UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
                             Subject = reader.GetString(reader.GetOrdinal("Subject")),
+                            Content = reader.GetString(reader.GetOrdinal("Content")),
                             DisplayName = reader.GetString(reader.GetOrdinal("DisplayName"))
                         };
                         comments.Add(comment);
@@ -56,5 +59,37 @@ namespace TabloidMVC.Repositories
             }
 
         }
+
+        public void AddComment(Comment comment)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    INSERT INTO Comment (PostId, 
+                                        UserProfileId, 
+                                        [Subject], 
+                                        Content,
+                                        CreateDateTime)
+                    OUTPUT INSERTED.ID
+                    VALUES (@postId, @userProfileId, @subject, @content, @createDateTime);
+                ";
+
+                    cmd.Parameters.AddWithValue("@content", comment.Content);
+                    cmd.Parameters.AddWithValue("@subject", comment.Subject);
+                    cmd.Parameters.AddWithValue("@userProfileId", comment.UserProfileId);
+                    cmd.Parameters.AddWithValue("@createDateTime", DateAndTime.Now);
+                    cmd.Parameters.AddWithValue("@postId", comment.PostId);
+
+
+                    int id = (int)cmd.ExecuteScalar();
+
+                    comment.Id = id;
+                }
+            }
+        }
+
     }
 }
