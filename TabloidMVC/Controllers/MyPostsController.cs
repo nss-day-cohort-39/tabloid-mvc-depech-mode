@@ -45,7 +45,6 @@ namespace TabloidMVC.Controllers
             {
                 int userId = GetCurrentUserProfileId();
                 post = _postRepo.GetUserPostById(id, userId);
-                post.Tags = _postTagRepo.GetPostTags(id);
                 if (post == null)
                 {
                     return NotFound();
@@ -53,7 +52,7 @@ namespace TabloidMVC.Controllers
             }
 
             post.Tags = _postTagRepo.GetPostTags(id);
-            return View("../Post/Details", post);
+            return RedirectToAction("Details", "Post", new { id = id });
         }
 
         // GET: MyPosts/Create

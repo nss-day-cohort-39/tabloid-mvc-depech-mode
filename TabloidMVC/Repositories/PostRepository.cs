@@ -120,7 +120,7 @@ namespace TabloidMVC.Repositories
                         post.Id = reader.GetInt32(reader.GetOrdinal("Id"));
                         post.Title = reader.GetString(reader.GetOrdinal("Title"));
                         post.Content = reader.GetString(reader.GetOrdinal("Content"));
-                        post.ImageLocation = reader.GetString(reader.GetOrdinal("HeaderImage"));
+                        post.ImageLocation = DbUtils.GetNullableString(reader, "HeaderImage");
                         post.CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"));
                         post.PublishDateTime = DbUtils.GetNullableDateTime(reader, "PublishDateTime");
                         post.CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId"));
