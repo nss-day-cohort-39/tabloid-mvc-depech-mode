@@ -32,6 +32,7 @@ namespace TabloidMVC.Models
         public bool Active { get; set; }
         
         [DisplayName("Full Name")]
+        public bool Active { get; set; }
         public string FullName
         {
             get

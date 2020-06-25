@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
@@ -196,23 +197,39 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
-        public void DeactivateUser(int id)
+        public void DeactivateUser(UserProfile user)
         {
-            using (SqlConnection conn = Connection)
+            try
             {
-                conn.Open();
-
-                using (SqlCommand cmd = conn.CreateCommand())
+                using (SqlConnection conn = Connection)
                 {
-                    cmd.CommandText = @"
-                            UPDATE UserProfile
-                            SET Active = 0
-                            WHERE Id = @id";
+                    conn.Open();
 
-                    cmd.Parameters.AddWithValue("@id", id);
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"
+                            DECLARE @ActiveAdmins INT
+                            SELECT @ActiveAdmins = Count(*)
+                            FROM UserProfile
+                            WHERE UserTypeId = 1 AND Active = 1
 
-                    cmd.ExecuteNonQuery();
+                            IF @ActiveAdmins = 1 AND @userType = 1
+                                RAISERROR('System must have at least one administrator.', 16, 1)
+                            ELSE
+                                UPDATE UserProfile
+                                SET Active = 0
+                                WHERE Id = @id";
+
+                        cmd.Parameters.AddWithValue("@id", user.Id);
+                        cmd.Parameters.AddWithValue("@userType", user.UserTypeId);
+
+                        cmd.ExecuteNonQuery();
+                    }
                 }
+            }
+            catch(SqlException ex)
+            {
+                throw new Errors.AdministratorTypeException(ex.Message);
             }
         }
         public void ReactivateUser(int id)
@@ -232,6 +249,42 @@ namespace TabloidMVC.Repositories
 
                     cmd.ExecuteNonQuery();
                 }
+            }
+        }
+
+        public void UpdateUserType(UserProfile user)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"
+                            DECLARE @ActiveAdmins INT
+                            SELECT @ActiveAdmins = Count(*)
+                            FROM UserProfile
+                            WHERE UserTypeId = 1 AND Active = 1
+
+                            IF @ActiveAdmins = 1 AND @userType = 2
+                                RAISERROR('System must have at least one administrator.', 16, 1)
+                            ELSE
+                                UPDATE UserProfile
+                                SET UserTypeId = @userType
+                                WHERE Id = @id";
+
+                        cmd.Parameters.AddWithValue("@userType", user.UserTypeId);
+                        cmd.Parameters.AddWithValue("@id", user.Id);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch(SqlException ex)
+            {
+                throw new Errors.AdministratorTypeException(ex.Message);
             }
         }
 
