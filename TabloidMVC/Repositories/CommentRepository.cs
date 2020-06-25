@@ -91,5 +91,77 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public void DeleteComment(int commentId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            DELETE FROM Comment
+                            WHERE Id = @id
+                        ";
+
+                    cmd.Parameters.AddWithValue("@id", commentId);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public Comment GetCommentById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT c.Id, 
+                               c.PostId, 
+                               c.UserProfileId, 
+                               c.[Subject], 
+                               c.Content,
+                               c.UserProfileId, 
+                               up.DisplayName AS DisplayName
+                               FROM Comment c
+                               LEFT JOIN UserProfile up ON up.Id = c.UserProfileId
+                               WHERE c.PostId = @PostId    
+                        FROM Comment
+                        WHERE Id = @id
+                    ";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+
+                        Comment comment = new Comment
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
+                            UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
+                            Subject = reader.GetString(reader.GetOrdinal("Subject")),
+                            Content = reader.GetString(reader.GetOrdinal("Content")),
+                            DisplayName = reader.GetString(reader.GetOrdinal("DisplayName"))
+                        };
+
+                        reader.Close();
+                        return comment;
+                    }
+                    else
+                    {
+                        reader.Close();
+                        return null;
+                    }
+                }
+
+
+            }
+        }
     }
 }
