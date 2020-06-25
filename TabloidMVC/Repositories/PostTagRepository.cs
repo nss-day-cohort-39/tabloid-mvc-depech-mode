@@ -61,7 +61,7 @@ namespace TabloidMVC.Repositories
 
                 }
 
-                if (vm.TagString != "")
+                if (vm.TagString != null)
                 {
                     //split the string of tags into a list
                     List<string> textTags = new List<string>();

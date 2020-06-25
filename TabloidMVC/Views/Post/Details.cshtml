@@ -30,13 +30,19 @@
                 </div>
 
             </section>
-            <hr />
-            <section class="d-flex justify-content-lg-start wrap">
-                @foreach (Tag tag in @Model.Tags)
-                {
-                    <h4 class="badge badge-light p-2 mr-2">@tag.Name</h4>
-                }
-            </section>
+
+            @if (@Model.Tags.Count() > 0)
+            {
+                <hr />
+                <section class="d-flex justify-content-lg-start wrap">
+                    <h4 class="badge p-2 mr-2">Tags</h4>
+                    @foreach (Tag tag in @Model.Tags)
+                    {
+                        <h4 class="badge badge-primary p-2 mr-2">@tag.Name</h4>
+                    }
+                </section>
+            }
+
             <hr />
             @if (!string.IsNullOrWhiteSpace(Model.ImageLocation))
             {
