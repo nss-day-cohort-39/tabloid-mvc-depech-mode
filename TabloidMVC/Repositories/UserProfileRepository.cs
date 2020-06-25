@@ -287,5 +287,36 @@ namespace TabloidMVC.Repositories
                 throw new Errors.AdministratorTypeException(ex.Message);
             }
         }
+
+        public void Add(UserProfile newUser)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        INSERT INTO UserProfile (
+                              DisplayName, FirstName, LastName, Email,
+                              CreateDateTime, ImageLocation, UserTypeId)
+                        OUTPUT INSERTED.ID 
+                        VALUES (
+                                @DisplayName, @FirstName, @LastName, @Email, 
+                                @CreateDateTime,@ImageLocation, @UserTypeId)";
+
+                    cmd.Parameters.AddWithValue("@DisplayName", newUser.DisplayName);
+                    cmd.Parameters.AddWithValue("@FirstName", newUser.FirstName);
+                    cmd.Parameters.AddWithValue("@LastName", newUser.LastName);
+                    cmd.Parameters.AddWithValue("@Email", newUser.Email);
+                    cmd.Parameters.AddWithValue("@CreateDateTime", newUser.CreateDateTime);
+                    cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(newUser.ImageLocation));
+                    cmd.Parameters.AddWithValue("@UserTypeId", newUser.UserTypeId);
+
+                    newUser.Id = (int)cmd.ExecuteScalar();
+
+
+                }
+            }
+        }
     }
 }
