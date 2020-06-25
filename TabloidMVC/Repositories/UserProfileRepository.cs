@@ -253,7 +253,7 @@ namespace TabloidMVC.Repositories
                             WHERE UserTypeId = 1 AND Active = 1
 
                             IF @ActiveAdmins = 1 AND @userType = 2
-                                RAISERROR('I AM AN ERROR!!', 16, 1)
+                                RAISERROR('System must have at least one administrator.', 16, 1)
                             ELSE
                                 UPDATE UserProfile
                                 SET UserTypeId = @userType
@@ -268,7 +268,7 @@ namespace TabloidMVC.Repositories
             }
             catch(SqlException exc)
             {
-                Console.WriteLine(exc);
+                throw new Errors.AdministratorTypeException(exc.Message);
             }
         }
     }

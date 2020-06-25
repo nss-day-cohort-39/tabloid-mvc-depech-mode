@@ -85,28 +85,34 @@ namespace TabloidMVC.Controllers
         {
             var user = _userRepo.GetById(id);
 
+            var vm = new ChangeUserTypeViewModel()
+            {
+                User = user
+            };
+
             if (user == null)
             {
                 return RedirectToAction("Index");
             }
 
-            return View(user);
+            return View(vm);
         }
 
         // POST: CategoryController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, UserProfile user)
+        public ActionResult Edit(int id, ChangeUserTypeViewModel vm)
         {
             try
             {
-                _userRepo.UpdateUserType(user);
+                _userRepo.UpdateUserType(vm.User);
 
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                return View(user);
+                vm.Exception = ex;
+                return View(vm);
             }
         }
     }
