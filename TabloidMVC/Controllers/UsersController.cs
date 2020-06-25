@@ -69,15 +69,16 @@ namespace TabloidMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Deactivate(int id, ChangeUserTypeViewModel vm)
         {
+            var user = _userRepo.GetById(id);
             try
             {
-                _userRepo.DeactivateUser(id);
+                _userRepo.DeactivateUser(user);
 
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                vm.User = _userRepo.GetById(id);
+                vm.User = user;
                 vm.Exception = ex;
                 return View(vm);
             }

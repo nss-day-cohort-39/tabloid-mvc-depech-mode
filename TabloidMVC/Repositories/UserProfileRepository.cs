@@ -197,7 +197,7 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
-        public void DeactivateUser(int id)
+        public void DeactivateUser(UserProfile user)
         {
             try
             {
@@ -213,14 +213,15 @@ namespace TabloidMVC.Repositories
                             FROM UserProfile
                             WHERE UserTypeId = 1 AND Active = 1
 
-                            IF @ActiveAdmins = 1
+                            IF @ActiveAdmins = 1 AND @userType = 1
                                 RAISERROR('System must have at least one administrator.', 16, 1)
                             ELSE
                                 UPDATE UserProfile
                                 SET Active = 0
                                 WHERE Id = @id";
 
-                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.Parameters.AddWithValue("@id", user.Id);
+                        cmd.Parameters.AddWithValue("@userType", user.UserTypeId);
 
                         cmd.ExecuteNonQuery();
                     }
