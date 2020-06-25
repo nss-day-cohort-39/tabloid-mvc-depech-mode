@@ -56,7 +56,7 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@id", vm.Post.Id);
                     var reader = cmd.ExecuteReader();
 
-                    reader.Close();
+                    conn.Close();
 
                 }
 
@@ -77,9 +77,9 @@ namespace TabloidMVC.Repositories
                             cmd.Parameters.AddWithValue("@id", vm.Post.Id);
                             cmd.Parameters.AddWithValue("@tagId", tag.Id);
                             var reader = cmd.ExecuteReader();
-
-                            reader.Close();
+                            conn.Close();
                         }
+                        
 
                     }
                 }
