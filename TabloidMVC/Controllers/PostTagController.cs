@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -37,7 +38,7 @@ namespace TabloidMVC.Controllers
 
             if (post == null)
             {
-                return View("../Post/");
+                return RedirectToAction("Index", "MyPosts");
             }
 
             List<Tag> postTags = _postTagRepo.GetPostTags(id); //list of all tags for this particular post
@@ -77,13 +78,26 @@ namespace TabloidMVC.Controllers
 
                 _postTagRepo.UpdateTags(vm);
 
-                return RedirectToAction("Details", "Post", new { id = vm.Post.Id });
+                if (post.UserProfileId == GetCurrentUserProfileId())
+                {
+                    return RedirectToAction("Details", "MyPosts", new { id = vm.Post.Id });
+                } else
+                {
+                    return RedirectToAction("Details", "Post", new { id = vm.Post.Id });
+                }
+                
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 return View(vm);
             }
+        }
+
+        private int GetCurrentUserProfileId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 

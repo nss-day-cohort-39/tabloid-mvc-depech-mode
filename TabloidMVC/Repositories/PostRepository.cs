@@ -124,6 +124,7 @@ namespace TabloidMVC.Repositories
                         post.CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"));
                         post.PublishDateTime = DbUtils.GetNullableDateTime(reader, "PublishDateTime");
                         post.CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId"));
+                        post.UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId"));
                         post.Category = new Category()
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),

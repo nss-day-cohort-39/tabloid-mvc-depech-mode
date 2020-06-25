@@ -37,7 +37,6 @@ namespace TabloidMVC.Controllers
             {
                 int userId = GetCurrentUserProfileId();
                 post = _postRepository.GetUserPostById(id, userId);
-                post.Tags = _postTagRepo.GetPostTags(id);
                 if (post == null)
                 {
                     return NotFound();
