@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
@@ -232,6 +233,42 @@ namespace TabloidMVC.Repositories
 
                     cmd.ExecuteNonQuery();
                 }
+            }
+        }
+
+        public void UpdateUserType(UserProfile user)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"
+                            DECLARE @ActiveAdmins INT
+                            SELECT @ActiveAdmins = Count(*)
+                            FROM UserProfile
+                            WHERE UserTypeId = 1 AND Active = 1
+
+                            IF @ActiveAdmins = 1 AND @userType = 2
+                                RAISERROR('I AM AN ERROR!!', 16, 1)
+                            ELSE
+                                UPDATE UserProfile
+                                SET UserTypeId = @userType
+                                WHERE Id = @id";
+
+                        cmd.Parameters.AddWithValue("@userType", user.UserTypeId);
+                        cmd.Parameters.AddWithValue("@id", user.Id);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch(SqlException exc)
+            {
+                Console.WriteLine(exc);
             }
         }
     }

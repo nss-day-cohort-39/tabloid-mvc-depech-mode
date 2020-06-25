@@ -80,5 +80,34 @@ namespace TabloidMVC.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public ActionResult Edit(int id)
+        {
+            var user = _userRepo.GetById(id);
+
+            if (user == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(user);
+        }
+
+        // POST: CategoryController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, UserProfile user)
+        {
+            try
+            {
+                _userRepo.UpdateUserType(user);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(user);
+            }
+        }
     }
 }
