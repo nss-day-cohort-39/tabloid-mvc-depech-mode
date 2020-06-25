@@ -57,7 +57,7 @@
                 <p class="col-sm-12 mt-5">@Html.DisplayFor(model => model.Content)</p>
             </section>
 
-            <a asp-action="GetCommentsByPostId" asp-route-PostId="@Model.Id" asp-controller="Comment" class="btn btn-outline-primary mx-1" >
+            <a asp-action="Index" asp-route-PostId="@Model.Id" asp-controller="Comment" class="btn btn-outline-primary mx-1" >
              View Comments
             </a>
 

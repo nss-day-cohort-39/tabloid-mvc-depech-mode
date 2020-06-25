@@ -23,7 +23,7 @@ namespace TabloidMVC.Controllers
             _commentRepository = new CommentRepository(config);
         }
         // GET: CommentController
-        public ActionResult GetCommentsByPostId(int PostId)
+        public ActionResult Index(int PostId)
         {
             var vm = new CommentViewModel();
             List<Comment> comments = _commentRepository.GetCommentsByPostId(PostId);
@@ -57,7 +57,7 @@ namespace TabloidMVC.Controllers
             {
                 _commentRepository.AddComment(comment);
 
-                return RedirectToAction("GetCommentsByPostId", new { PostId = comment.PostId });
+                return RedirectToAction("Index", new { PostId = comment.PostId });
             }
             catch (Exception ex)
             {
@@ -66,27 +66,35 @@ namespace TabloidMVC.Controllers
             }
         }
 
-        // GET: CommentController/Edit/5
+        //GET: CommentController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Comment comment = _commentRepository.GetCommentById(id);
+
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            return View(comment);
         }
 
-        // POST: CommentController/Edit/5
+        //POST: CommentController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Comment comment)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _commentRepository.UpdateComment(comment);
+
+                return RedirectToAction("Index", new { PostId = comment.PostId } );
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
         }
-
         // GET: CommentController/Delete/5
         public ActionResult Delete(int id)
         {
@@ -97,13 +105,12 @@ namespace TabloidMVC.Controllers
         // POST: CommentController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(Comment comment)
+        public ActionResult Delete(int id, Comment comment)
         {
             try
             {
                 _commentRepository.DeleteComment(comment.Id);
-
-                return RedirectToAction("GetCommentsByPostId", new { PostId = comment.Id });
+                return RedirectToAction("Index", new { PostId = comment.PostId });
             }
             catch (Exception ex)
             {  

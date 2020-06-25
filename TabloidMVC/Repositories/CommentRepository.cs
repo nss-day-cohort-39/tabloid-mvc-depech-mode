@@ -128,10 +128,10 @@ namespace TabloidMVC.Repositories
                                up.DisplayName AS DisplayName
                         FROM Comment c
                         LEFT JOIN UserProfile up ON up.Id = c.UserProfileId
-                        WHERE c.PostId = @PostId                            
+                        WHERE c.Id = @Id                            
                     ";
 
-                    cmd.Parameters.AddWithValue("@PostId", id);
+                    cmd.Parameters.AddWithValue("@Id", id);
                     
 
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -160,6 +160,33 @@ namespace TabloidMVC.Repositories
                 }
 
 
+            }
+
+        }
+
+        public void UpdateComment(Comment comment)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        UPDATE Comment
+                            SET 
+                            PostId = @PostId,
+                            Subject = @Subject,
+                            Content = @Content
+                        WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@Subject", comment.Subject);
+                    cmd.Parameters.AddWithValue("@Content", comment.Content);
+                    cmd.Parameters.AddWithValue("@PostId", comment.PostId);
+                    cmd.Parameters.AddWithValue("@id", comment.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
     }

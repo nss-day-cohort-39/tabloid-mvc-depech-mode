@@ -19,7 +19,7 @@ namespace TabloidMVC.Models
         public string Content { get; set; }
 
         [DisplayName("Created")]
-        [DataType(DataType.Date)]
+        //[DataType(DataType.Date)]
         public DateTime CreateDateTime { get; set; }
         public int PostId { get; set; }
         public string DisplayName { get; set; }
