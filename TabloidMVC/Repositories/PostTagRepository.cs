@@ -64,7 +64,15 @@ namespace TabloidMVC.Repositories
                 if (vm.TagString != "")
                 {
                     //split the string of tags into a list
-                    List<string> textTags = vm.TagString.Split(new char[] { ',' }).ToList();
+                    List<string> textTags = new List<string>();
+                    if (vm.TagString.Contains(","))
+                    {
+                        textTags = vm.TagString.Split(new char[] { ',' }).ToList();
+                    } else
+                    {
+                        //there is only one tag so no need to split by commas
+                        textTags.Add(vm.TagString); 
+                    }
 
                     //match the tag names with the corresponding tag
                     IEnumerable<Tag> tagList = textTags.Select(tagtext => vm.TagList.First(tag => tag.Name == tagtext));
