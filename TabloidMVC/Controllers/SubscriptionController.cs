@@ -33,8 +33,8 @@ namespace TabloidMVC.Controllers
         public ActionResult Index(int id)
         {
             Post post = _postRepo.GetPostById(id);
-            int subscriberUserId = post.UserProfileId;
-            UserProfile userProfile = _userRepo.GetById(subscriberUserId);
+            int providerUserId = post.UserProfileId;
+            UserProfile userProfile = _userRepo.GetById(providerUserId);
 
             if (userProfile == null)
             {
@@ -44,7 +44,7 @@ namespace TabloidMVC.Controllers
                 SubscribeViewModel vm = new SubscribeViewModel()
                 {
                     ProviderUserId = GetCurrentUserProfileId(),
-                    SubscriberUserId = subscriberUserId,
+                    SubscriberUserId = providerUserId,
                     PostId = post.Id,
                     ProviderUserProfile = userProfile
                 };
@@ -58,15 +58,21 @@ namespace TabloidMVC.Controllers
         // POST: SubscriptionController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Index(IFormCollection collection)
+        public ActionResult Index(int id, SubscribeViewModel vm)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                Subscription sub = new Subscription()
+                {
+                    SubscriberUserProfileId = GetCurrentUserProfileId(),
+                    ProviderUserProfileId = vm.ProviderUserId
+                };
+                _subRepo.Add(sub);
+                return RedirectToAction("Details", "Post", new { id = vm.PostId });
             }
             catch
             {
-                return View();
+                return View(vm);
             }
         }
 

@@ -52,13 +52,12 @@ namespace TabloidMVC.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        INSERT INTO Subscription (SubscriberUserProfileId, ProviderUserProfileId, BeginDateTime, EndDateTime)
+                        INSERT INTO Subscription (SubscriberUserProfileId, ProviderUserProfileId, BeginDateTime)
                         OUTPUT INSERTED.ID
-                        VALUES (@subscriberUserProfileId, @providerUserProfileId, @beginDateTime, @endDateTime)";
+                        VALUES (@subscriberUserProfileId, @providerUserProfileId, @beginDateTime)";
                     cmd.Parameters.AddWithValue("@subscriberUserProfileId", subscription.SubscriberUserProfileId);
                     cmd.Parameters.AddWithValue("@providerUserProfileId", subscription.ProviderUserProfileId);
                     cmd.Parameters.AddWithValue("@beginDateTime", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@endDateTime", null);
 
                     subscription.Id = (int)cmd.ExecuteScalar();
                 }
