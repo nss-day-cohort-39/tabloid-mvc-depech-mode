@@ -11,7 +11,7 @@ namespace TabloidMVC.Repositories
     public class SubscriptionRepository : BaseRepository
     {
         public SubscriptionRepository(IConfiguration config) : base(config) { }
-            public List<Tag> GetAll()
+        public List<Subscription> GetAll()
         {
             using (var conn = Connection)
             {
@@ -23,20 +23,44 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@id", id);
                     var reader = cmd.ExecuteReader();
 
-                    var tags = new List<Tag>();
+                    var subscriptions = new List<Subscription>();
 
                     while (reader.Read())
                     {
-                        tags.Add(new Tag()
+                        subscriptions.Add(new Subscription()
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("name")),
+                            SubscriberUserProfileId = reader.GetInt32(reader.GetOrdinal("SubscriberUserProfileId")),
+                            ProviderUserProfileId = reader.GetInt32(reader.GetOrdinal("ProviderUserProfileId")),
+                            BeginDateTime = reader.GetDateTime(reader.GetOrdinal("BeginDateTime")),
+                            EndDateTime = reader.GetDateTime(reader.GetOrdinal("EndDateTime"))
                         });
                     }
 
                     reader.Close();
 
-                    return tags;
+                    return subscriptions;
+                }
+            }
+        }
+
+        public void Add(Subscription subscription)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        INSERT INTO Subscription (SubscriberUserProfileId, ProviderUserProfileId, BeginDateTime, EndDateTime)
+                        OUTPUT INSERTED.ID
+                        VALUES (@subscriberUserProfileId, @providerUserProfileId, @beginDateTime, @endDateTime)";
+                    cmd.Parameters.AddWithValue("@subscriberUserProfileId", subscription.SubscriberUserProfileId);
+                    cmd.Parameters.AddWithValue("@providerUserProfileId", subscription.ProviderUserProfileId);
+                    cmd.Parameters.AddWithValue("@beginDateTime", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@endDateTime", null);
+
+                    tag.Id = (int)cmd.ExecuteScalar();
                 }
             }
         }
