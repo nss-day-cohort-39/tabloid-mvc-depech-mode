@@ -1,0 +1,45 @@
+﻿@model TabloidMVC.Models.ViewModels.ChangeUserTypeViewModel
+
+
+@{
+    ViewData["Title"] = "Edit";
+}
+    <div class="container pt-5">
+        <h1>Change Profile Type</h1>
+
+        <h4>@Model.User.DisplayName</h4>
+        <hr />
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input asp-for="User.Id" class="form-control" type="hidden" />
+                    @if (Model.Exception != null)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            System must have at least one administrator.
+                        </div>
+                    }
+                    <div class="form-group">
+                        <label asp-for="User.UserTypeId" class="control-label">Select User Type</label>
+                        <select asp-for="User.UserTypeId" class="form-control">
+                            <option value="2">Author</option>
+                            <option value="1">Admin</option>
+                        </select>
+                        <span asp-validation-for="User.UserTypeId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
+    </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
