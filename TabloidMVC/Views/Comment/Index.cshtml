@@ -1,70 +1,36 @@
 ﻿@model TabloidMVC.Models.ViewModels.CommentViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "GetCommentsByPostId";
 }
+    <div class="container pt-5">
 
-<h1>Index</h1>
+        <h1>Check out all your comments</h1>
 
-<p>
-    <a asp-action="Create" asp-route-PostId="@Model.Post.Id">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            @*<th>
-                Id
-            </th>*@
-            <th>
-                Subject
-            </th>
-            <th>
-                Content
-            </th>
-            <th>
-                CreateDateTime
-            </th>
-            @*<th>
-                PostId
-            </th>*@
-            <th>
-                DisplayName
-            </th>
-            @*<th>
-                UserProfileId
-            </th>*@
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Comments) {
-        <tr>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>*@
-            <td>
-                @Html.DisplayFor(modelItem => item.Subject)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDateTime)
-            </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.PostId)
-            </td>*@
-            <td>
-                @Html.DisplayFor(modelItem => item.DisplayName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserProfileId)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) ||
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <p>
+            <a asp-action="Create" asp-route-PostId="@Model.Post.Id">Create New Comment</a>
+        </p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Content</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Comments)
+                {
+                    <tr>
+                        <td>@item.Subject</td>
+                        <td>@item.Content</td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
