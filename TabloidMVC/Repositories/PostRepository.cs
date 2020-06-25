@@ -51,7 +51,7 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        public Post GetPublisedPostById(int id)
+        public Post GetPublishedPostById(int id)
         {
             using (var conn = Connection)
             {
@@ -83,6 +83,53 @@ namespace TabloidMVC.Repositories
                     if (reader.Read())
                     {
                         post = NewPostFromReader(reader);
+                    }
+
+                    reader.Close();
+
+                    return post;
+                }
+            }
+        }
+
+        public Post GetPostById(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                       SELECT p.Id, p.Title, p.Content, 
+                              p.ImageLocation AS HeaderImage,
+                              p.CreateDateTime, p.PublishDateTime, p.IsApproved,
+                              p.CategoryId, p.UserProfileId,
+                              c.[Name] AS CategoryName
+                         FROM Post p
+                              LEFT JOIN Category c ON p.CategoryId = c.id
+                        WHERE p.id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+                    var reader = cmd.ExecuteReader();
+
+                    Post post = null;
+
+                    if (reader.Read())
+                    {
+                        post = new Post();
+                        post.Id = reader.GetInt32(reader.GetOrdinal("Id"));
+                        post.Title = reader.GetString(reader.GetOrdinal("Title"));
+                        post.Content = reader.GetString(reader.GetOrdinal("Content"));
+                        post.ImageLocation = DbUtils.GetNullableString(reader, "HeaderImage");
+                        post.CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"));
+                        post.PublishDateTime = DbUtils.GetNullableDateTime(reader, "PublishDateTime");
+                        post.CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId"));
+                        post.UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId"));
+                        post.Category = new Category()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                            Name = reader.GetString(reader.GetOrdinal("CategoryName"))
+                        };
                     }
 
                     reader.Close();
@@ -216,8 +263,10 @@ namespace TabloidMVC.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
+                            DELETE FROM PostTag 
+                            WHERE PostId = @id;
                             DELETE FROM Post
-                            WHERE Id = @id";
+                            WHERE Id = @id;";
 
                     cmd.Parameters.AddWithValue("@id", post.Id);
 
