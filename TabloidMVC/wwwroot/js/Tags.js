@@ -41,13 +41,6 @@ addTagButton.addEventListener("click", event => {
     tagInput.value = "Select...";
 });
 
-//run the event when user presses enter inside of tagInput
-tagInput.addEventListener("keyup", event => {
-    if (event.keyCode === 13) {
-        addTagButton.click();
-    }
-});
-
 //event listener to remove the tag from the array
 tagContainer.addEventListener("click", event => {
     if (event.target.id.startsWith("tag-")) {

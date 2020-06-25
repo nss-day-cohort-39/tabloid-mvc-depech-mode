@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 
@@ -37,7 +38,24 @@ namespace TabloidMVC.Controllers
                 return View("../Post/");
             }
 
-            vm.Tags = _postTagRepo.GetPostTags(id); //list of all tags for this particular post
+            List<Tag> postTags = _postTagRepo.GetPostTags(id); //list of all tags for this particular post
+            vm.Tags = postTags;
+            
+            //create a comma separated string of the tags
+            if (postTags.Count > 0)
+            {
+                string tagString = "";
+
+                for (int i = 0; i < postTags.Count; i++)
+                {
+                    tagString += postTags[i].Name;
+                    if (i != (postTags.Count-1))
+                    {
+                        tagString += ",";
+                    }
+                }
+                vm.TagString = tagString;
+            }
             vm.TagList = _tagRepo.GetAll(); //list of all possible tags
 
             return View(vm);
