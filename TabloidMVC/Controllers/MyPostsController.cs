@@ -17,11 +17,13 @@ namespace TabloidMVC.Controllers
     {
         private readonly PostRepository _postRepo;
         private readonly CategoryRepository _categoryRepository;
+        private readonly PostTagRepository _postTagRepo;
 
         public MyPostsController(IConfiguration config)
         {
             _postRepo = new PostRepository(config);
             _categoryRepository = new CategoryRepository(config);
+            _postTagRepo = new PostTagRepository(config);
         }
 
         // GET: MyPosts
@@ -38,7 +40,7 @@ namespace TabloidMVC.Controllers
         // GET: MyPosts/Details/5
         public ActionResult Details(int id)
         {
-            var post = _postRepo.GetPublisedPostById(id);
+            var post = _postRepo.GetPublishedPostById(id);
             if (post == null)
             {
                 int userId = GetCurrentUserProfileId();
@@ -49,7 +51,8 @@ namespace TabloidMVC.Controllers
                 }
             }
 
-            return View("../Post/Details", post);
+            post.Tags = _postTagRepo.GetPostTags(id);
+            return RedirectToAction("Details", "Post", new { id = id });
         }
 
         // GET: MyPosts/Create
