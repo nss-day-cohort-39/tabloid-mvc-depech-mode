@@ -26,7 +26,7 @@
             <tr>
                 <td>@item.Subject</td>
                 <td>@item.Content</td>
-                <td>@item.CreateDateTime</td>
+                <td>@item.CreateDateTime.ToString("dddd, MMM dd yyyy")</td>
                 <td>@item.DisplayName</td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |

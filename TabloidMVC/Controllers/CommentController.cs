@@ -57,7 +57,7 @@ namespace TabloidMVC.Controllers
         {
             try
             {
-                comment.CreateDateTime = DateTime.Now;
+                comment.CreateDateTime = DateAndTime.Now;
                 _commentRepository.AddComment(comment);
 
                 return RedirectToAction("Index", new { PostId = comment.PostId });
