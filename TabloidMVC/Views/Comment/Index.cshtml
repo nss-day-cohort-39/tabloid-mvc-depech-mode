@@ -31,7 +31,8 @@
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
 
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id }) |
+                    <a asp-action="Details" asp-route-id="@Model.Post.Id" asp-controller="Post">Back to Post</a>
                 </td>
             </tr>
             }
