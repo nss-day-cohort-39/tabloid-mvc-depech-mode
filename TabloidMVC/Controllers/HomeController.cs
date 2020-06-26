@@ -16,10 +16,12 @@ namespace TabloidMVC.Controllers
     public class HomeController : Controller
     {
         private readonly PostRepository _postRepo;
+        private readonly PostTagRepository _postTagRepo;
 
         public HomeController(IConfiguration config)
         {
             _postRepo = new PostRepository(config);
+            _postTagRepo = new PostTagRepository(config);
         }
 
             public IActionResult Index()
@@ -30,10 +32,17 @@ namespace TabloidMVC.Controllers
                 return View();
             } else
             {
+                List<Post> posts = _postRepo.GetSubscribedPostByUserId(currentUserId);
+                foreach (Post post in posts)
+                {
+                    List<Tag> tags = _postTagRepo.GetPostTags(post.Id);
+                    post.Tags = tags;
+
+                }
                 HomeViewModel vm = new HomeViewModel()
                 {
                     CurrentUserId = currentUserId,
-                    Posts = _postRepo.GetSubscribedPostByUserId(currentUserId)
+                    Posts = posts
                 };
                 return View(vm);
             }
