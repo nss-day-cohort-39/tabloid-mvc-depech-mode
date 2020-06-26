@@ -25,7 +25,7 @@ namespace TabloidMVC.Models
         public DateTime CreateDateTime { get; set; }
 
         [DisplayName("Published")]
-        [DisplayFormat(DataFormatString = "{0:MMM dd, yyyy}")]
+        [DataType(DataType.Date)]
         public DateTime? PublishDateTime { get; set; }
 
         public bool IsApproved { get; set; }
