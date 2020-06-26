@@ -83,8 +83,7 @@ namespace TabloidMVC.Controllers
         {
             var vm = new PostCreateViewModel();
             vm.CategoryOptions = _categoryRepository.GetAll();
-            int userId = GetCurrentUserProfileId();
-            var post = _postRepository.GetUserPostById(id, userId);
+            var post = _postRepository.GetPostById(id);
             vm.Post = post;
 
             if (post == null)
@@ -121,7 +120,7 @@ namespace TabloidMVC.Controllers
         public ActionResult Delete(int id)
         {
             int userId = GetCurrentUserProfileId();
-            var post = _postRepository.GetUserPostById(id, userId);
+            var post = _postRepository.GetPostById(id);
 
             if (post == null)
             {
