@@ -20,6 +20,8 @@ namespace TabloidMVC.Models
         [StringLength(255, MinimumLength = 1)]
         public string ImageLocation { get; set; }
 
+        [DisplayName("Created")]
+        [DataType(DataType.DateTime)]
         public DateTime CreateDateTime { get; set; }
 
         [DisplayName("Published")]
