@@ -91,6 +91,13 @@ namespace TabloidMVC.Controllers
                 return RedirectToAction("Index");
             }
 
+            int currentUserId = GetCurrentUserProfileId();
+            string UsersRole = GetCurrentUserRole();
+            if(UsersRole == "Author" && post.UserProfileId != currentUserId)
+            {
+                RedirectToAction("Index");
+            }
+
             return View(vm);
         }
 
@@ -119,12 +126,18 @@ namespace TabloidMVC.Controllers
 
         public ActionResult Delete(int id)
         {
-            int userId = GetCurrentUserProfileId();
             var post = _postRepository.GetPostById(id);
 
             if (post == null)
             {
                 return RedirectToAction("Index");
+            }
+
+            int currentUserId = GetCurrentUserProfileId();
+            string UsersRole = GetCurrentUserRole();
+            if (UsersRole == "Author" && post.UserProfileId != currentUserId)
+            {
+                RedirectToAction("Index");
             }
 
             return View(post);
@@ -146,7 +159,10 @@ namespace TabloidMVC.Controllers
                 return View(post);
             }
         }
-
+        private string GetCurrentUserRole()
+        {
+            return User.FindFirstValue(ClaimTypes.Role);
+        }
     }
 
 }
