@@ -29,8 +29,9 @@ namespace TabloidMVC.Models
 
         public bool IsApproved { get; set; }
 
-        [Required]
+        
         [DisplayName("Category")]
+        [Required(ErrorMessage = "Please select a category...")]
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 
