@@ -31,7 +31,7 @@ namespace TabloidMVC.Repositories
                                         FROM Comment c
                                         LEFT JOIN UserProfile up ON up.Id = c.UserProfileId
                                         WHERE c.PostId = @PostId
-                                        ORDER BY c.CreateDateTime ASC";
+                                        ORDER BY c.CreateDateTime DESC";
 
                     cmd.Parameters.AddWithValue("@PostId", PostId);
 
