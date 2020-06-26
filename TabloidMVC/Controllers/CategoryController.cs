@@ -10,8 +10,8 @@ using TabloidMVC.Models;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
-{   
-    [Authorize]
+{
+    [Authorize(Roles = "Admin")]
     public class CategoryController : Controller
     {
         private readonly CategoryRepository _catRepo;

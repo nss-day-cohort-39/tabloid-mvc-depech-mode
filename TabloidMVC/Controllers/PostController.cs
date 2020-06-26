@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
@@ -15,27 +16,36 @@ namespace TabloidMVC.Controllers
     {
         private readonly PostRepository _postRepository;
         private readonly CategoryRepository _categoryRepository;
+        private readonly CommentRepository _commentRepository;
+        private readonly PostTagRepository _postTagRepository;
         private readonly PostTagRepository _postTagRepo;
+        private readonly SubscriptionRepository _subRepo;
 
         public PostController(IConfiguration config)
         {
             _postRepository = new PostRepository(config);
             _categoryRepository = new CategoryRepository(config);
+            _commentRepository = new CommentRepository(config);
+            _postTagRepository = new PostTagRepository(config);
             _postTagRepo = new PostTagRepository(config);
+            _subRepo = new SubscriptionRepository(config);
         }
 
         public IActionResult Index()
         {
-            var posts = _postRepository.GetAllPublishedPosts();
-            return View(posts);
+            var vm = new PostIndexViewModel();
+            vm.Posts = _postRepository.GetAllPublishedPosts();
+            vm.UserId = GetCurrentUserProfileId();
+            vm.PostModel = new Post();
+            return View(vm);
         }
 
         public IActionResult Details(int id)
         {
             var post = _postRepository.GetPublishedPostById(id);
+            int userId = GetCurrentUserProfileId();
             if (post == null)
             {
-                int userId = GetCurrentUserProfileId();
                 post = _postRepository.GetUserPostById(id, userId);
                 if (post == null)
                 {
@@ -43,7 +53,11 @@ namespace TabloidMVC.Controllers
                 }
             }
             post.Tags = _postTagRepo.GetPostTags(id);
-            return View(post);
+            post.IsSubscribed = _subRepo.IsSubscribed(new SubscribeViewModel() { SubscriberUserId = userId, ProviderUserId = post.UserProfileId });
+            var vm = new PostIndexViewModel();
+            vm.PostModel = post;
+            vm.UserId = GetCurrentUserProfileId();
+            return View(vm);
         }
 
         public IActionResult Create()
@@ -77,11 +91,18 @@ namespace TabloidMVC.Controllers
         {
             var vm = new PostCreateViewModel();
             vm.CategoryOptions = _categoryRepository.GetAll();
+            var post = _postRepository.GetPostById(id);
             int userId = GetCurrentUserProfileId();
-            var post = _postRepository.GetUserPostById(id, userId);
             vm.Post = post;
 
             if (post == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            int currentUserId = GetCurrentUserProfileId();
+            string UsersRole = GetCurrentUserRole();
+            if(UsersRole == "Author" && post.UserProfileId != currentUserId)
             {
                 return RedirectToAction("Index");
             }
@@ -114,10 +135,16 @@ namespace TabloidMVC.Controllers
 
         public ActionResult Delete(int id)
         {
-            int userId = GetCurrentUserProfileId();
-            var post = _postRepository.GetUserPostById(id, userId);
+            var post = _postRepository.GetPostById(id);
 
             if (post == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            int currentUserId = GetCurrentUserProfileId();
+            string UsersRole = GetCurrentUserRole();
+            if (UsersRole == "Author" && post.UserProfileId != currentUserId)
             {
                 return RedirectToAction("Index");
             }
@@ -141,7 +168,10 @@ namespace TabloidMVC.Controllers
                 return View(post);
             }
         }
-
+        private string GetCurrentUserRole()
+        {
+            return User.FindFirstValue(ClaimTypes.Role);
+        }
     }
 
 }

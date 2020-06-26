@@ -9,13 +9,15 @@ namespace TabloidMVC.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please enter a title for your post...")]
+        [StringLength(255, MinimumLength = 1)]
         public string Title { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please enter some content for your post...")]
         public string Content { get; set; }
 
         [DisplayName("Header Image URL")]
+        [StringLength(255, MinimumLength = 1)]
         public string ImageLocation { get; set; }
 
         [DisplayName("Created")]
@@ -23,13 +25,14 @@ namespace TabloidMVC.Models
         public DateTime CreateDateTime { get; set; }
 
         [DisplayName("Published")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:MMM dd, yyyy}")]
         public DateTime? PublishDateTime { get; set; }
 
         public bool IsApproved { get; set; }
 
-        [Required]
+        
         [DisplayName("Category")]
+        [Required(ErrorMessage = "Please select a category...")]
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 
@@ -38,5 +41,7 @@ namespace TabloidMVC.Models
         public UserProfile UserProfile { get; set; }
 
         public List<Tag> Tags { get; set; }
+
+        public bool IsSubscribed { get; set; }
     }
 }
