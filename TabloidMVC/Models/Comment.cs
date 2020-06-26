@@ -16,6 +16,7 @@ namespace TabloidMVC.Models
         public string Subject { get; set; }
 
         [Required(ErrorMessage = "Please enter some content for your comment...")]
+        [StringLength(2^31, MinimumLength = 1)]
         public string Content { get; set; }
 
         [DisplayName("Created")]
