@@ -95,7 +95,7 @@ namespace TabloidMVC.Controllers
             string UsersRole = GetCurrentUserRole();
             if(UsersRole == "Author" && post.UserProfileId != currentUserId)
             {
-                RedirectToAction("Index");
+                return RedirectToAction("Index");
             }
 
             return View(vm);

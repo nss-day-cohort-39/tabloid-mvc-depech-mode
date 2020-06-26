@@ -45,7 +45,7 @@ namespace TabloidMVC.Controllers
             string UsersRole = GetCurrentUserRole();
             if (UsersRole == "Author" && post.UserProfileId != currentUserId)
             {
-                RedirectToAction("Index", "MyPosts");
+                return RedirectToAction("Index", "MyPosts");
             }
 
             List<Tag> postTags = _postTagRepo.GetPostTags(id); //list of all tags for this particular post
