@@ -28,8 +28,11 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Index()
         {
-            var posts = _postRepository.GetAllPublishedPosts();
-            return View(posts);
+            var vm = new PostIndexViewModel();
+            vm.Posts = _postRepository.GetAllPublishedPosts();
+            vm.UserId = GetCurrentUserProfileId();
+            vm.PostModel = new Post();
+            return View(vm);
         }
 
         public IActionResult Details(int id)
@@ -45,8 +48,11 @@ namespace TabloidMVC.Controllers
                 }
             }
             post.Tags = _postTagRepo.GetPostTags(id);
-            post.IsSubscribed = _subRepo.IsSubscribed(new SubscribeViewModel() { SubscriberUserId = userId, ProviderUserId = post.UserProfileId});
-            return View(post);
+            post.IsSubscribed = _subRepo.IsSubscribed(new SubscribeViewModel() { SubscriberUserId = userId, ProviderUserId = post.UserProfileId });
+            var vm = new PostIndexViewModel();
+            vm.PostModel = post;
+            vm.UserId = GetCurrentUserProfileId();
+            return View(vm);
         }
 
         public IActionResult Create()
@@ -80,11 +86,18 @@ namespace TabloidMVC.Controllers
         {
             var vm = new PostCreateViewModel();
             vm.CategoryOptions = _categoryRepository.GetAll();
-            int userId = GetCurrentUserProfileId();
             var post = _postRepository.GetPostById(id);
+            int userId = GetCurrentUserProfileId();
             vm.Post = post;
 
             if (post == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            int currentUserId = GetCurrentUserProfileId();
+            string UsersRole = GetCurrentUserRole();
+            if(UsersRole == "Author" && post.UserProfileId != currentUserId)
             {
                 return RedirectToAction("Index");
             }
@@ -117,10 +130,16 @@ namespace TabloidMVC.Controllers
 
         public ActionResult Delete(int id)
         {
-            int userId = GetCurrentUserProfileId();
-            var post = _postRepository.GetUserPostById(id, userId);
+            var post = _postRepository.GetPostById(id);
 
             if (post == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            int currentUserId = GetCurrentUserProfileId();
+            string UsersRole = GetCurrentUserRole();
+            if (UsersRole == "Author" && post.UserProfileId != currentUserId)
             {
                 return RedirectToAction("Index");
             }
@@ -144,7 +163,10 @@ namespace TabloidMVC.Controllers
                 return View(post);
             }
         }
-
+        private string GetCurrentUserRole()
+        {
+            return User.FindFirstValue(ClaimTypes.Role);
+        }
     }
 
 }
