@@ -247,7 +247,7 @@ namespace TabloidMVC.Repositories
                             LEFT JOIN Category c ON p.CategoryId = c.id
                             LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                             LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                            WHERE s.SubscriberUserProfileId = @id AND IsApproved = 1 AND PublishDateTime < SYSDATETIME()
+                            WHERE s.SubscriberUserProfileId = @id AND IsApproved = 1 AND PublishDateTime < SYSDATETIME() AND EndDateTime IS NULL
                             ORDER BY PublishDateTime DESC";
                     cmd.Parameters.AddWithValue("@id", id);
                     var reader = cmd.ExecuteReader();

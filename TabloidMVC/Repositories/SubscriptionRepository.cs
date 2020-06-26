@@ -54,7 +54,7 @@ namespace TabloidMVC.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT TOP 1 * FROM Subscription 
-                                        WHERE SubscriberUserProfileId = @subscriberId AND ProviderUserProfileId = @providerId";
+                                        WHERE SubscriberUserProfileId = @subscriberId AND ProviderUserProfileId = @providerId AND EndDateTime IS NULL";
                     cmd.Parameters.AddWithValue("@subscriberId", vm.SubscriberUserId);
                     cmd.Parameters.AddWithValue("@providerId", vm.ProviderUserId);
                     var reader = cmd.ExecuteReader();
@@ -85,7 +85,7 @@ namespace TabloidMVC.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT COUNT(Id) AS SubNum FROM Subscription 
-                                        WHERE SubscriberUserProfileId = @subscriberId AND ProviderUserProfileId = @providerId";
+                                        WHERE SubscriberUserProfileId = @subscriberId AND ProviderUserProfileId = @providerId AND EndDateTime IS NULL";
                     cmd.Parameters.AddWithValue("@subscriberId", vm.SubscriberUserId);
                     cmd.Parameters.AddWithValue("@providerId", vm.ProviderUserId);
                     var reader = cmd.ExecuteReader();
@@ -123,9 +123,10 @@ namespace TabloidMVC.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
+                        DELETE FROM Subscription WHERE SubscriberUserProfileId = @subscriberUserProfileId AND ProviderUserProfileId = @providerUserProfileId;
                         INSERT INTO Subscription (SubscriberUserProfileId, ProviderUserProfileId, BeginDateTime)
                         OUTPUT INSERTED.ID
-                        VALUES (@subscriberUserProfileId, @providerUserProfileId, @beginDateTime)";
+                        VALUES (@subscriberUserProfileId, @providerUserProfileId, @beginDateTime);";
                     cmd.Parameters.AddWithValue("@subscriberUserProfileId", subscription.SubscriberUserProfileId);
                     cmd.Parameters.AddWithValue("@providerUserProfileId", subscription.ProviderUserProfileId);
                     cmd.Parameters.AddWithValue("@beginDateTime", DateTime.Now);
@@ -143,8 +144,9 @@ namespace TabloidMVC.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        DELETE FROM Subscription WHERE Id = @id";
+                        UPDATE Subscription SET EndDateTime = @endDateTime WHERE Id = @id";
 
+                    cmd.Parameters.AddWithValue("@endDateTime", DateTime.Now);
                     cmd.Parameters.AddWithValue("@id", sub.Id);
 
                     var reader = cmd.ExecuteReader();
