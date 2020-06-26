@@ -52,7 +52,7 @@ else
             <div class="d-flex justify-content-around flex-wrap">
                 @foreach (Post post in Model.Posts)
                 {
-                    <div class="card mb-4 mx-1 text-left" style="min-width:200px; flex-basis: 30%; max-width: 400px;">
+                    <div class="card mb-4 mx-1 text-left border-primary" style="min-width:200px; flex-basis: 30%; max-width: 400px;">
                         @if (post.ImageLocation == null)
                         {
                             <div class="card-img-top bg-light w-100 text-white d-flex align-content-center justify-content-center" style="height: 200px;">

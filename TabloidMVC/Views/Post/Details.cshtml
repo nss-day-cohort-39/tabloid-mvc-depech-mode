@@ -81,6 +81,7 @@
         <section class="row">
             <p class="col-sm-12 mt-5">@Html.DisplayFor(model => model.PostModel.Content)</p>
         </section>
+        <a asp-action="Index" asp-route-PostId="@Model.PostModel.Id" asp-controller="Comment" class="btn btn-outline-primary mx-1">View Comments</a>
     </div>
     <div>
         <a asp-action="Index">Back to List</a>

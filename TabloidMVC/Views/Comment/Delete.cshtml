@@ -1,0 +1,21 @@
+﻿@model TabloidMVC.Models.Comment
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+
+<div class="container pt-5">
+
+    <h1>Delete</h1>
+    <h3>Are you sure you want to delete this comment?</h3>
+    <div>
+        <hr />
+        <form asp-action="Delete">
+            <input type="hidden" name="PostId" value="@Model.PostId" />
+            <input type="submit" value="Delete" class="btn btn-danger" /> |
+            <a asp-action="Index" asp-route-PostId="@Model.PostId">Cancel</a>
+        </form>
+    </div>
+</div>
+

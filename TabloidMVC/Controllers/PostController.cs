@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
@@ -15,6 +16,8 @@ namespace TabloidMVC.Controllers
     {
         private readonly PostRepository _postRepository;
         private readonly CategoryRepository _categoryRepository;
+        private readonly CommentRepository _commentRepository;
+        private readonly PostTagRepository _postTagRepository;
         private readonly PostTagRepository _postTagRepo;
         private readonly SubscriptionRepository _subRepo;
 
@@ -22,6 +25,8 @@ namespace TabloidMVC.Controllers
         {
             _postRepository = new PostRepository(config);
             _categoryRepository = new CategoryRepository(config);
+            _commentRepository = new CommentRepository(config);
+            _postTagRepository = new PostTagRepository(config);
             _postTagRepo = new PostTagRepository(config);
             _subRepo = new SubscriptionRepository(config);
         }
