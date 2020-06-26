@@ -48,6 +48,7 @@ namespace TabloidMVC.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, registeredUser.Id.ToString()),
                 new Claim(ClaimTypes.Email, registeredUser.Email),
+                new Claim(ClaimTypes.Role, registeredUser.UserType.Name)
             };
 
                 var claimsIdentity = new ClaimsIdentity(
@@ -84,6 +85,7 @@ namespace TabloidMVC.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, userProfile.Id.ToString()),
                 new Claim(ClaimTypes.Email, userProfile.Email),
+                new Claim(ClaimTypes.Role, userProfile.UserType.Name)
             };
 
             var claimsIdentity = new ClaimsIdentity(

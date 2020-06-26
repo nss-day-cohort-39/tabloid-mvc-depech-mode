@@ -41,6 +41,13 @@ namespace TabloidMVC.Controllers
                 return RedirectToAction("Index", "MyPosts");
             }
 
+            int currentUserId = GetCurrentUserProfileId();
+            string UsersRole = GetCurrentUserRole();
+            if (UsersRole == "Author" && post.UserProfileId != currentUserId)
+            {
+                return RedirectToAction("Index", "MyPosts");
+            }
+
             List<Tag> postTags = _postTagRepo.GetPostTags(id); //list of all tags for this particular post
             vm.Tags = postTags;
             
@@ -98,6 +105,10 @@ namespace TabloidMVC.Controllers
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.Parse(id);
+        }
+        private string GetCurrentUserRole()
+        {
+            return User.FindFirstValue(ClaimTypes.Role);
         }
     }
 
