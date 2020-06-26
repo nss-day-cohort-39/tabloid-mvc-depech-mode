@@ -31,6 +31,7 @@ namespace TabloidMVC.Controllers
             List<Comment> comments = _commentRepository.GetCommentsByPostId(PostId);
             vm.Comments = comments;
             Post post = _postRepository.GetPostByIdForComment(PostId);
+            vm.UserId = GetCurrentUserProfileId();
             vm.Post = post;
             return View(vm);
         }
@@ -78,6 +79,12 @@ namespace TabloidMVC.Controllers
             {
                 return NotFound();
             }
+            int currentUserId = GetCurrentUserProfileId();
+            string UsersRole = GetCurrentUserRole();
+            if (UsersRole == "Author" && comment.UserProfileId != currentUserId)
+            {
+                return RedirectToAction("Index", new { PostId = comment.PostId });
+            }
 
             return View(comment);
         }
@@ -102,6 +109,12 @@ namespace TabloidMVC.Controllers
         public ActionResult Delete(int id)
         {
             Comment comment = _commentRepository.GetCommentById(id);
+            int currentUserId = GetCurrentUserProfileId();
+            string UsersRole = GetCurrentUserRole();
+            if (UsersRole == "Author" && comment.UserProfileId != currentUserId)
+            {
+                return RedirectToAction("Index", new { PostId = comment.PostId });
+            }
             return View(comment);
         }
 
@@ -120,16 +133,15 @@ namespace TabloidMVC.Controllers
                 return View(comment);
             }
         }
-
-        private int GetCurrentUserId()
-        {
-            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return int.Parse(id);
-        }
+      
         private int GetCurrentUserProfileId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.Parse(id);
+        }
+        private string GetCurrentUserRole()
+        {
+            return User.FindFirstValue(ClaimTypes.Role);
         }
     }
 }

@@ -24,7 +24,7 @@
             @if (IsAdmin() || Model.UserId == Model.PostModel.UserProfileId)
             {
                 <div class="row">
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Edit">
+                    <a asp-action="Edit" asp-route-id="@Model.PostModel.Id" class="btn btn-outline-primary mx-1" title="Edit">
                         <i class="fas fa-pencil-alt"></i>
                     </a>
                     <a asp-controller="PostTag" asp-action="Manage" asp-route-id="@Model.PostModel.Id" class="btn btn-outline-primary mx-1" title="Manage Tags">
@@ -63,6 +63,7 @@
         <section class="row">
             <p class="col-sm-12 mt-5">@Html.DisplayFor(model => model.PostModel.Content)</p>
         </section>
+        <a asp-action="Index" asp-route-PostId="@Model.PostModel.Id" asp-controller="Comment" class="btn btn-outline-primary mx-1">View Comments</a>
     </div>
     <div>
         <a asp-action="Index">Back to List</a>

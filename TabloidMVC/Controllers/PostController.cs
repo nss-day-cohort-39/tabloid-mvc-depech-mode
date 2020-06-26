@@ -48,7 +48,7 @@ namespace TabloidMVC.Controllers
                     return NotFound();
                 }
             }
-            post.Tags = _postTagRepo.GetPostTags(id);
+            post.Tags = _postTagRepository.GetPostTags(id);
             var vm = new PostIndexViewModel();
             vm.PostModel = post;
             vm.UserId = GetCurrentUserProfileId();
