@@ -18,6 +18,8 @@ namespace TabloidMVC.Controllers
         private readonly CategoryRepository _categoryRepository;
         private readonly CommentRepository _commentRepository;
         private readonly PostTagRepository _postTagRepository;
+        private readonly PostTagRepository _postTagRepo;
+        private readonly SubscriptionRepository _subRepo;
 
         public PostController(IConfiguration config)
         {
@@ -25,6 +27,8 @@ namespace TabloidMVC.Controllers
             _categoryRepository = new CategoryRepository(config);
             _commentRepository = new CommentRepository(config);
             _postTagRepository = new PostTagRepository(config);
+            _postTagRepo = new PostTagRepository(config);
+            _subRepo = new SubscriptionRepository(config);
         }
 
         public IActionResult Index()
@@ -39,16 +43,17 @@ namespace TabloidMVC.Controllers
         public IActionResult Details(int id)
         {
             var post = _postRepository.GetPublishedPostById(id);
+            int userId = GetCurrentUserProfileId();
             if (post == null)
             {
-                int userId = GetCurrentUserProfileId();
                 post = _postRepository.GetUserPostById(id, userId);
                 if (post == null)
                 {
                     return NotFound();
                 }
             }
-            post.Tags = _postTagRepository.GetPostTags(id);
+            post.Tags = _postTagRepo.GetPostTags(id);
+            post.IsSubscribed = _subRepo.IsSubscribed(new SubscribeViewModel() { SubscriberUserId = userId, ProviderUserId = post.UserProfileId });
             var vm = new PostIndexViewModel();
             vm.PostModel = post;
             vm.UserId = GetCurrentUserProfileId();
@@ -87,6 +92,7 @@ namespace TabloidMVC.Controllers
             var vm = new PostCreateViewModel();
             vm.CategoryOptions = _categoryRepository.GetAll();
             var post = _postRepository.GetPostById(id);
+            int userId = GetCurrentUserProfileId();
             vm.Post = post;
 
             if (post == null)

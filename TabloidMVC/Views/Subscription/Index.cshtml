@@ -1,0 +1,17 @@
+﻿@model TabloidMVC.Models.ViewModels.SubscribeViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+    <div class="container pt-5">
+        <h4>Do you want to subscribe to @Model.ProviderUserProfile.DisplayName's posts?</h4>
+        <div>
+            <form asp-action="Index">
+                <input asp-for="PostId" value="@Model.PostId" type="hidden" class="form-control" />
+                <input asp-for="ProviderUserId" value="@Model.ProviderUserId" type="hidden" class="form-control" />
+                <input type="submit" value="Yes!" class="btn btn-primary" /> |
+                <a asp-controller="Post" asp-action="Details" asp-route-id="@Model.PostId">Cancel</a>
+            </form>
+        </div>
+    </div>
