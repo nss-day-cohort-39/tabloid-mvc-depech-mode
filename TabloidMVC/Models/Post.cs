@@ -9,13 +9,16 @@ namespace TabloidMVC.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please enter a title for your post...")]
+        [StringLength(255, MinimumLength = 1)]
         public string Title { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please enter some content for your post...")]
+        [StringLength(2 ^ 31, MinimumLength = 1)]
         public string Content { get; set; }
 
         [DisplayName("Header Image URL")]
+        [StringLength(255, MinimumLength = 1)]
         public string ImageLocation { get; set; }
 
         public DateTime CreateDateTime { get; set; }
