@@ -15,21 +15,25 @@
             <tr>
                 <th>Subject</th>
                 <th>Content</th>
+                <th>Creation Date</th>
+                <th>Display Name</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model.Comments)
             {
-                <tr>
-                    <td>@item.Subject</td>
-                    <td>@item.Content</td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+            <tr>
+                <td>@item.Subject</td>
+                <td>@item.Content</td>
+                <td>@item.CreateDateTime</td>
+                <td>@item.DisplayName</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
 
-                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                    </td>
-                </tr>
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
             }
         </tbody>
     </table>

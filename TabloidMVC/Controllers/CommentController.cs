@@ -5,7 +5,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
@@ -41,7 +43,7 @@ namespace TabloidMVC.Controllers
 
         // GET: CommentController/Create
         public ActionResult Create(int PostId)
-        {
+        { 
             var comm = new Comment();
             comm.PostId = PostId;
             comm.UserProfileId = GetCurrentUserProfileId();
@@ -55,6 +57,7 @@ namespace TabloidMVC.Controllers
         {
             try
             {
+                comment.CreateDateTime = DateTime.Now;
                 _commentRepository.AddComment(comment);
 
                 return RedirectToAction("Index", new { PostId = comment.PostId });

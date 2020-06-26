@@ -25,7 +25,8 @@ namespace TabloidMVC.Repositories
                                         c.UserProfileId, 
                                         c.[Subject], 
                                         c.Content,
-                                        c.UserProfileId, 
+                                        c.UserProfileId,
+                                        c.CreateDateTime,
                                         up.DisplayName AS DisplayName
                                         FROM Comment c
                                         LEFT JOIN UserProfile up ON up.Id = c.UserProfileId
@@ -47,7 +48,8 @@ namespace TabloidMVC.Repositories
                             UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
                             Subject = reader.GetString(reader.GetOrdinal("Subject")),
                             Content = reader.GetString(reader.GetOrdinal("Content")),
-                            DisplayName = reader.GetString(reader.GetOrdinal("DisplayName"))
+                            DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                            CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"))
                         };
                         comments.Add(comment);
                     }
@@ -80,7 +82,7 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@content", comment.Content);
                     cmd.Parameters.AddWithValue("@subject", comment.Subject);
                     cmd.Parameters.AddWithValue("@userProfileId", comment.UserProfileId);
-                    cmd.Parameters.AddWithValue("@createDateTime", DateAndTime.Now);
+                    cmd.Parameters.AddWithValue("@createDateTime", comment.CreateDateTime);
                     cmd.Parameters.AddWithValue("@postId", comment.PostId);
 
 
