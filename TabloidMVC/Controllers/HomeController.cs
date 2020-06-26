@@ -2,25 +2,41 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
+using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly PostRepository _postRepo;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IConfiguration config)
         {
-            _logger = logger;
+            _postRepo = new PostRepository(config);
         }
 
-        public IActionResult Index()
+            public IActionResult Index()
         {
-            return View();
+            int? currentUserId = GetCurrentUserProfileId();
+                if (currentUserId == null)
+            {
+                return View();
+            } else
+            {
+                HomeViewModel vm = new HomeViewModel()
+                {
+                    CurrentUserId = currentUserId,
+                    Posts = _postRepo.GetSubscribedPostByUserId(currentUserId)
+                };
+                return View(vm);
+            }
         }
 
         public IActionResult Privacy()
@@ -32,6 +48,19 @@ namespace TabloidMVC.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private int? GetCurrentUserProfileId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (id != null)
+            {
+                return int.Parse(id);
+            } else
+            {
+                return null;
+            }
+            
         }
     }
 }

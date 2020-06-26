@@ -35,6 +35,7 @@ namespace TabloidMVC.Controllers
             Post post = _postRepo.GetPostById(id);
             int providerUserId = post.UserProfileId;
             UserProfile userProfile = _userRepo.GetById(providerUserId);
+            int currentUserId = GetCurrentUserProfileId();
 
             if (userProfile == null)
             {
@@ -43,8 +44,8 @@ namespace TabloidMVC.Controllers
             {
                 SubscribeViewModel vm = new SubscribeViewModel()
                 {
-                    ProviderUserId = GetCurrentUserProfileId(),
-                    SubscriberUserId = providerUserId,
+                    SubscriberUserId = currentUserId,
+                    ProviderUserId = providerUserId,
                     PostId = post.Id,
                     ProviderUserProfile = userProfile
                 };
@@ -62,9 +63,10 @@ namespace TabloidMVC.Controllers
         {
             try
             {
+                int currentUserId = GetCurrentUserProfileId();
                 Subscription sub = new Subscription()
                 {
-                    SubscriberUserProfileId = GetCurrentUserProfileId(),
+                    SubscriberUserProfileId = currentUserId,
                     ProviderUserProfileId = vm.ProviderUserId
                 };
                 _subRepo.Add(sub);
@@ -79,21 +81,45 @@ namespace TabloidMVC.Controllers
         // GET: SubscriptionController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            Post post = _postRepo.GetPostById(id);
+            int providerUserId = post.UserProfileId;
+            UserProfile userProfile = _userRepo.GetById(providerUserId);
+
+            if (userProfile == null)
+            {
+                return RedirectToAction("Index", "Post");
+            }
+            else
+            {
+                int currentUserId = GetCurrentUserProfileId();
+                SubscribeViewModel vm = new SubscribeViewModel()
+                {
+                    SubscriberUserId = currentUserId,
+                    ProviderUserId = providerUserId,
+                    PostId = post.Id,
+                    ProviderUserProfile = userProfile
+                };
+
+                return View(vm);
+            }
         }
 
         // POST: SubscriptionController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, SubscribeViewModel vm)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                int currentUserId = GetCurrentUserProfileId();
+                vm.SubscriberUserId = currentUserId;
+                Subscription sub = _subRepo.GetSubscription(vm);
+                _subRepo.Delete(sub);
+                return RedirectToAction("Details", "Post", new { id = vm.PostId });
             }
             catch
             {
-                return View();
+                return View(vm);
             }
         }
 

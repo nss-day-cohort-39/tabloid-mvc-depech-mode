@@ -1,0 +1,18 @@
+﻿@model TabloidMVC.Models.ViewModels.SubscribeViewModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+    <div class="container pt-5">
+        <div>
+            <h4>Are you sure you want to unsubscribe from @Model.ProviderUserProfile.FullName's posts?</h4>
+            <hr />
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="ProviderUserId" />
+                <input type="hidden" asp-for="PostId" />
+                <input type="submit" value="Unsubscribe" class="btn btn-danger" /> |
+                <a asp-controller="Post" asp-action="Details" asp-route-id="@Model.PostId">Cancel</a>
+            </form>
+        </div>
+    </div>

@@ -35,9 +35,9 @@ namespace TabloidMVC.Controllers
         public IActionResult Details(int id)
         {
             var post = _postRepository.GetPublishedPostById(id);
+            int userId = GetCurrentUserProfileId();
             if (post == null)
             {
-                int userId = GetCurrentUserProfileId();
                 post = _postRepository.GetUserPostById(id, userId);
                 if (post == null)
                 {
@@ -45,7 +45,7 @@ namespace TabloidMVC.Controllers
                 }
             }
             post.Tags = _postTagRepo.GetPostTags(id);
-            post.IsSubscribed = _subRepo.IsSubscribed(post.UserProfileId);
+            post.IsSubscribed = _subRepo.IsSubscribed(new SubscribeViewModel() { SubscriberUserId = userId, ProviderUserId = post.UserProfileId});
             return View(post);
         }
 
@@ -81,7 +81,7 @@ namespace TabloidMVC.Controllers
             var vm = new PostCreateViewModel();
             vm.CategoryOptions = _categoryRepository.GetAll();
             int userId = GetCurrentUserProfileId();
-            var post = _postRepository.GetUserPostById(id, userId);
+            var post = _postRepository.GetPostById(id);
             vm.Post = post;
 
             if (post == null)

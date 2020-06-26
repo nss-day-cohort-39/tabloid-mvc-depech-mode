@@ -1,34 +1,84 @@
-﻿@{
+﻿@using TabloidMVC.Utils
+@model TabloidMVC.Models.ViewModels.HomeViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<header class="masthead bg-primary text-white text-center">
-    <div class="container d-flex align-items-center flex-column">
-        <img class="masthead-avatar mb-2" src="~/assets/logo_transparent.png" alt="">
-        <div class="divider-custom divider-light">
+
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <header class="masthead bg-primary text-white text-center">
+        <div class="container d-flex align-items-center flex-column">
+            <img class="masthead-avatar mb-2" src="~/assets/logo_transparent.png" alt="">
+            <div class="divider-custom divider-light">
+                <div class="divider-custom-line"></div>
+                <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                <div class="divider-custom-line"></div>
+            </div>
+            <h2 class="pre-wrap masthead-subheading font-weight-light mb-0">BLOGS & JOURNALS</h2>
+        </div>
+    </header>
+
+    <div class="text-center container mt-5">
+        <h2 class="page-section-heading text-secondary d-inline-block mb-0">GET STARTED</h2>
+        <!-- Icon Divider-->
+        <div class="divider-custom">
             <div class="divider-custom-line"></div>
             <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
             <div class="divider-custom-line"></div>
         </div>
-        <h2 class="pre-wrap masthead-subheading font-weight-light mb-0">BLOGS & JOURNALS</h2>
-    </div>
-</header>
-
-<div class="text-center container mt-5">
-    <h2 class="page-section-heading text-secondary d-inline-block mb-0">GET STARTED</h2>
-    <!-- Icon Divider-->
-    <div class="divider-custom">
-        <div class="divider-custom-line"></div>
-        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
-        <div class="divider-custom-line"></div>
-    </div>
-
-    @if (!User.Identity.IsAuthenticated)
-    {
         <div class="row justify-content-center">
             <a class="btn btn-primary btn-lg" asp-controller="account" asp-action="login">LOGIN</a>
             <a class="btn btn-primary btn-lg ml-3" asp-controller="account" asp-action="register">REGISTER</a>
         </div>
+    </div>
 
-    }
-</div>
+}
+else
+{
+    <div class="text-center container mt-5">
+        <h2 class="page-section-heading text-secondary d-inline-block mb-0 mt-3">MY SUBSCRIPTIONS</h2>
+        <!-- Icon Divider-->
+        <div class="divider-custom">
+            <div class="divider-custom-line"></div>
+            <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+            <div class="divider-custom-line"></div>
+        </div>
+        <!-- Content Below-->
+        @if (Model.Posts.Count > 0)
+        {
+            <div class="d-flex justify-content-around flex-wrap">
+                @foreach (Post post in Model.Posts)
+                {
+                    <div class="card mb-4 mx-1" style="min-width:200px; flex-basis: 30%; max-width: 400px;">
+                        @if (post.ImageLocation == null)
+                        {
+                            <div class="card-img-top bg-light w-100 text-white d-flex align-content-center justify-content-center" style="height: 200px;">
+                                <svg class="bi bi-star-fill" width="50%" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                                </svg>
+                            </div>
+                        }
+                        else
+                        {
+                            <img class="card-img-top" src="@post.ImageLocation" style="object-fit: cover; height: 200px;" alt="@post.Title">
+                        }
+
+                        <div class="card-body">
+                            <h5 class="card-title">@post.Title</h5>
+                            <p class="card-text " style="white-space: pre-line;">@post.Content.Truncate(65)</p>
+                            <a asp-controller="Post" asp-action="Details" asp-route-id="@post.Id" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-light text-center font-italic">No current subscriptions</div>
+        }
+    </div>
+}
+
