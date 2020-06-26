@@ -21,9 +21,9 @@
                 <p class="text-secondary">Written by @Model.PostModel.UserProfile.DisplayName</p>
                 <p class="text-black-50">Published on @Html.DisplayFor(model => model.PostModel.PublishDateTime)</p>
             </div>
-            @if (IsAdmin() || Model.UserId == Model.PostModel.UserProfileId)
-            {
-                <div class="row">
+            <div class="row">
+                @if (Model.UserId != Model.PostModel.UserProfileId)
+                {
                     @if (Model.PostModel.IsSubscribed == false)
                     {
                         <a asp-controller="Subscription" asp-action="Index" asp-route-id="@Model.PostModel.Id" class="btn btn-outline-success mx-1" title="Subscribe">
@@ -36,6 +36,11 @@
                             Unsubscribe
                         </a>
                     }
+                }
+                @if (IsAdmin() || Model.UserId == Model.PostModel.UserProfileId)
+                {
+
+
                     <a asp-action="Edit" asp-route-id="@Model.PostModel.Id" class="btn btn-outline-primary mx-1" title="Edit">
                         <i class="fas fa-pencil-alt"></i>
                     </a>
@@ -47,9 +52,10 @@
                     <a asp-action="Delete" asp-route-id="@Model.PostModel.Id" class="btn btn-outline-primary mx-1" title="Delete">
                         <i class="fas fa-trash"></i>
                     </a>
-                </div>
-            }
-        </section>
+
+                }
+            </div>
+            </section>
 
         @if (@Model.PostModel.Tags.Count() > 0)
         {
