@@ -1,36 +1,36 @@
 ﻿@model TabloidMVC.Models.ViewModels.CommentViewModel
 
 @{
-    ViewData["Title"] = "GetCommentsByPostId";
+    ViewData["Title"] = "Index";
 }
-    <div class="container pt-5">
+<div class="container pt-5">
 
-        <h1>Check out all your comments</h1>
+    <h1>Here are your comments for @Model.Post.Title</h1>
 
-        <p>
-            <a asp-action="Create" asp-route-PostId="@Model.Post.Id">Create New Comment</a>
-        </p>
-        <table class="table table-striped">
-            <thead>
+    <p>
+        <a asp-action="Create" asp-route-PostId="@Model.Post.Id" class="btn btn-dark">Add Comment</a>
+    </p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Content</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Comments)
+            {
                 <tr>
-                    <th>Subject</th>
-                    <th>Content</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Comments)
-                {
-                    <tr>
-                        <td>@item.Subject</td>
-                        <td>@item.Content</td>
-                        <td>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    <td>@item.Subject</td>
+                    <td>@item.Content</td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
 
-                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        </div>
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
