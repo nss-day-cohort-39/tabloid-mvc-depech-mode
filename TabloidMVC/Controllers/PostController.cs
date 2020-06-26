@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
@@ -15,13 +16,15 @@ namespace TabloidMVC.Controllers
     {
         private readonly PostRepository _postRepository;
         private readonly CategoryRepository _categoryRepository;
-        private readonly PostTagRepository _postTagRepo;
+        private readonly CommentRepository _commentRepository;
+        private readonly PostTagRepository _postTagRepository;
 
         public PostController(IConfiguration config)
         {
             _postRepository = new PostRepository(config);
             _categoryRepository = new CategoryRepository(config);
-            _postTagRepo = new PostTagRepository(config);
+            _commentRepository = new CommentRepository(config);
+            _postTagRepository = new PostTagRepository(config);
         }
 
         public IActionResult Index()
@@ -45,7 +48,7 @@ namespace TabloidMVC.Controllers
                     return NotFound();
                 }
             }
-            post.Tags = _postTagRepo.GetPostTags(id);
+            post.Tags = _postTagRepository.GetPostTags(id);
             var vm = new PostIndexViewModel();
             vm.PostModel = post;
             vm.UserId = GetCurrentUserProfileId();

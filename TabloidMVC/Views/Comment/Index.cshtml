@@ -1,0 +1,52 @@
+﻿@model TabloidMVC.Models.ViewModels.CommentViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+    <div class="container pt-5">
+
+        <h1>Here are your comments for @Model.Post.Title</h1>
+
+        <p>
+            <a asp-action="Create" asp-route-PostId="@Model.Post.Id" class="btn btn-dark">Add Comment</a>
+        </p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Content</th>
+                    <th>Creation Date</th>
+                    <th>Display Name</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Comments)
+                {
+                    <tr>
+                        <td>@item.Subject</td>
+                        <td>@item.Content</td>
+                        <td>@item.CreateDateTime.ToString("dddd, MMM dd yyyy")</td>
+                        <td>@item.DisplayName</td>
+                        <td>
+                            @if (Model.UserId == item.UserProfileId || User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="Delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+
+                            }
+
+
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+        <a asp-action="Details" asp-route-id="@Model.Post.Id" asp-controller="Post">Back to Post</a>
+    </div>
